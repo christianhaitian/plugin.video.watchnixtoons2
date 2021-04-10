@@ -4,16 +4,16 @@ import sys
 import requests
 import json #added by Christian Haitian
 import os #added by Christian Haitian
-import cPickle as pickle #added by Christian Haitian
+import pickle as pickle #added by Christian Haitian
 import datetime #added by Christian Haitian
-from urlparse import urlparse, urljoin #added by Christian Haitian
+from urllib.parse import urlparse, urljoin #added by Christian Haitian
 
 from itertools import chain
 from base64 import b64decode
 from time import time, sleep
-from urlparse import parse_qsl
+from urllib.parse import parse_qsl
 from string import ascii_uppercase
-from urllib import quote_plus, urlencode
+from urllib.parse import quote_plus, urlencode
 from os import sep as osSeparator #added by Christian Haitian
 
 import xbmc
@@ -27,6 +27,7 @@ from Lib.SimpleTrakt import SimpleTrakt
 # Disable urllib3's "InsecureRequestWarning: Unverified HTTPS request is being made" warnings
 import requests
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
+from functools import reduce
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 
@@ -175,7 +176,7 @@ def actionCatalogMenu(params):
                 THUMBS_BASEURL = 'https://doko-desuka.github.io/128h/'
                 artDict = {'thumb': None, 'fanart': ADDON_FANART}
                 miscItem = None
-                for sectionName in sorted(catalog.iterkeys()):
+                for sectionName in sorted(catalog.keys()):
                     if catalog[sectionName]:
                         item = xbmcgui.ListItem(sectionName)
                         # Correct the address for the '#' (miscellaneous, non-letter) category.
@@ -196,7 +197,7 @@ def actionCatalogMenu(params):
                         xbmcgui.ListItem(sectionName),
                         True
                     )
-                    for sectionName in sorted(catalog.iterkeys()) if len(catalog[sectionName])
+                    for sectionName in sorted(catalog.keys()) if len(catalog[sectionName])
                 ]
             # See if an "All" folder is necessary (when there's more than one folder in the catalog).
             if len(items) > 1:
@@ -905,7 +906,7 @@ def actionShowInfo(params):
 
 
 def unescapeHTMLText(text):
-    text = text.encode('utf-8') if isinstance(text, unicode) else unicode(text, errors='ignore').encode('utf-8')
+    text = text.encode('utf-8') if isinstance(text, str) else str(text, errors='ignore').encode('utf-8')
     # Unescape HTML entities.
     if r'&#' in text:
         # Strings found by regex-searching on all lists in the source website. It's very likely to only be these.
@@ -946,8 +947,8 @@ def getTitleInfo(unescapedTitle):
         spaceIndex = unescapedTitle.find(' ', episodeIndex+9)
         if spaceIndex > episodeIndex:
             episodeSplit = unescapedTitle[episodeIndex+9 : spaceIndex].split('-') # For multipart episodes, like "42-43".
-            episode = filter(str.isdigit, episodeSplit[0])
-            multiPart = filter(str.isdigit, episodeSplit[1]) if len(episodeSplit) > 1 else None
+            episode = list(filter(str.isdigit, episodeSplit[0]))
+            multiPart = list(filter(str.isdigit, episodeSplit[1])) if len(episodeSplit) > 1 else None
 
             # Get the episode title string (stripped of spaces, hyphens and en-dashes).
             englishIndex = unescapedTitle.rfind(' English', spaceIndex)
@@ -1312,7 +1313,7 @@ def actionResolve(params):
         # If more than one "embedURL" statement found, make a selection dialog and call them "chapters".
         if len(dataIndices) > 1:
             selectedIndex = xbmcgui.Dialog().select(
-                'Select Chapter', ['Chapter '+str(n) for n in xrange(1, len(dataIndices)+1)]
+                'Select Chapter', ['Chapter '+str(n) for n in range(1, len(dataIndices)+1)]
             )
         else:
             selectedIndex = 0
@@ -1400,7 +1401,7 @@ def actionResolve(params):
         # If more than one "embedURL" statement found, make a selection dialog and call them "chapters".
         if len(dataIndices) > 1:
             selectedIndex = xbmcgui.Dialog().select(
-                'Select Chapter', ['Chapter '+str(n) for n in xrange(1, len(dataIndices)+1)]
+                'Select Chapter', ['Chapter '+str(n) for n in range(1, len(dataIndices)+1)]
             )
         else:
             selectedIndex = 0
@@ -1512,7 +1513,7 @@ def actionResolve(params):
         # Need to use the exact same ListItem name & infolabels when playing or else Kodi replaces that item
         # in the UI listing.
         item = xbmcgui.ListItem(xbmc.getInfoLabel('ListItem.Label'))
-        item.setPath(mediaHead.url + '|' + '&'.join(key+'='+quote_plus(val) for key, val in MEDIA_HEADERS.iteritems()))
+        item.setPath(mediaHead.url + '|' + '&'.join(key+'='+quote_plus(val) for key, val in MEDIA_HEADERS.items()))
         item.setMimeType(mediaHead.headers.get('Content-Type', 'video/mp4')) # Avoids Kodi's MIME request.
 
         # When coming in from a Favourite item, there will be no metadata. Try to get at least a title.
@@ -1569,7 +1570,7 @@ def actionResolve(params):
 				}
         mediaHead = solveMediaRedirect(mediaURL, MEDIA_HEADERS)
         item = xbmcgui.ListItem(xbmc.getInfoLabel('ListItem.Label'))
-        item.setPath(mediaHead.url + '|' + '&'.join(key+'='+quote_plus(val) for key, val in MEDIA_HEADERS.iteritems()))
+        item.setPath(mediaHead.url + '|' + '&'.join(key+'='+quote_plus(val) for key, val in MEDIA_HEADERS.items()))
         item.setMimeType(mediaHead.headers.get('Content-Type', 'video/mp4')) # Avoids Kodi's MIME request.
 			# When coming in from a Favourite item, there will be no metadata. Try to get at least a title.
         itemTitle = xbmc.getInfoLabel('ListItem.Title')
@@ -1641,7 +1642,7 @@ def actionResolve(params):
         # If more than one "embedURL" statement found, make a selection dialog and call them "chapters".
         if len(dataIndices) > 1:
             selectedIndex = xbmcgui.Dialog().select(
-                'Select Chapter', ['Chapter '+str(n) for n in xrange(1, len(dataIndices)+1)]
+                'Select Chapter', ['Chapter '+str(n) for n in range(1, len(dataIndices)+1)]
             )
         else:
             selectedIndex = 0
@@ -1753,7 +1754,7 @@ def actionResolve(params):
         # Need to use the exact same ListItem name & infolabels when playing or else Kodi replaces that item
         # in the UI listing.
         item = xbmcgui.ListItem(xbmc.getInfoLabel('ListItem.Label'))
-        item.setPath(mediaHead.url + '|' + '&'.join(key+'='+quote_plus(val) for key, val in MEDIA_HEADERS.iteritems()))
+        item.setPath(mediaHead.url + '|' + '&'.join(key+'='+quote_plus(val) for key, val in MEDIA_HEADERS.items()))
         item.setMimeType(mediaHead.headers.get('Content-Type', 'video/mp4')) # Avoids Kodi's MIME request.
 
         # When coming in from a Favourite item, there will be no metadata. Try to get at least a title.
@@ -1835,7 +1836,7 @@ def actionResolve(params):
         # If more than one "embedURL" statement found, make a selection dialog and call them "chapters".
         if len(dataIndices) > 1:
             selectedIndex = xbmcgui.Dialog().select(
-                'Select Chapter', ['Chapter '+str(n) for n in xrange(1, len(dataIndices)+1)]
+                'Select Chapter', ['Chapter '+str(n) for n in range(1, len(dataIndices)+1)]
             )
         else:
             selectedIndex = 0
@@ -1946,7 +1947,7 @@ def actionResolve(params):
         # Need to use the exact same ListItem name & infolabels when playing or else Kodi replaces that item
         # in the UI listing.
         item = xbmcgui.ListItem(xbmc.getInfoLabel('ListItem.Label'))
-        item.setPath(mediaHead.url + '|' + '&'.join(key+'='+quote_plus(val) for key, val in MEDIA_HEADERS.iteritems()))
+        item.setPath(mediaHead.url + '|' + '&'.join(key+'='+quote_plus(val) for key, val in MEDIA_HEADERS.items()))
         item.setMimeType(mediaHead.headers.get('Content-Type', 'video/mp4')) # Avoids Kodi's MIME request.
 
         # When coming in from a Favourite item, there will be no metadata. Try to get at least a title.
@@ -1992,9 +1993,9 @@ def buildURL(query):
     :param query: Dictionary of url parameters to put in the URL.
     :returns: A formatted and urlencoded URL string.
     '''
-    return (PLUGIN_URL + '?' + urlencode({k: v.encode('utf-8') if isinstance(v, unicode)
-                                         else unicode(v, errors='ignore').encode('utf-8')
-                                         for k, v in query.iteritems()}))
+    return (PLUGIN_URL + '?' + urlencode({k: v.encode('utf-8') if isinstance(v, str)
+                                         else str(v, errors='ignore').encode('utf-8')
+                                         for k, v in query.items()}))
 
 
 def setViewMode():
@@ -2090,7 +2091,7 @@ def requestHelper(url, data=None, extraHeaders=None):
     # Store the session cookie(s), if any.
     if not cookieProperty and response.cookies:
         setRawWindowProperty(
-            PROPERTY_SESSION_COOKIE, '; '.join(pair[0]+'='+pair[1] for pair in response.cookies.get_dict().iteritems())
+            PROPERTY_SESSION_COOKIE, '; '.join(pair[0]+'='+pair[1] for pair in response.cookies.get_dict().items())
         )
 
     elapsed = time() - startTime
