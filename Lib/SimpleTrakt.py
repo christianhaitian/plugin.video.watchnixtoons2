@@ -138,7 +138,7 @@ class SimpleTrakt():
                 'client_secret': self.CLIENT_SECRET
             }
 
-            for s in xrange(totalTime):
+            for s in range(totalTime):
                 if progressDialog.iscanceled():
                     break
                 percentage = int(s / float(totalTime) * 100.0)
