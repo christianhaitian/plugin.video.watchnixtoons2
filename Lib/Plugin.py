@@ -30,6 +30,7 @@ from requests.packages.urllib3.exceptions import InsecureRequestWarning
 from functools import reduce
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
+global MEDIA_HEADERS
 
 PLUGIN_ID = int(sys.argv[1])
 PLUGIN_URL = sys.argv[0]
@@ -1492,7 +1493,7 @@ def actionResolve(params):
 
      if mediaURL:
         # Kodi headers for playing web streamed media.
-        global MEDIA_HEADERS
+#        global MEDIA_HEADERS
         if not MEDIA_HEADERS:
             MEDIA_HEADERS = {
                 'User-Agent': WNT2_USER_AGENT,
@@ -1733,7 +1734,7 @@ def actionResolve(params):
 
      if mediaURL:
         # Kodi headers for playing web streamed media.
-        global MEDIA_HEADERS
+#        global MEDIA_HEADERS
         if not MEDIA_HEADERS:
             MEDIA_HEADERS = {
                 'User-Agent': WNT2_USER_AGENT,
@@ -1926,7 +1927,7 @@ def actionResolve(params):
 
     if mediaURL:
         # Kodi headers for playing web streamed media.
-        global MEDIA_HEADERS
+#        global MEDIA_HEADERS
         if not MEDIA_HEADERS:
             MEDIA_HEADERS = {
                 'User-Agent': WNT2_USER_AGENT,
