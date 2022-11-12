@@ -31,6 +31,7 @@ jobs:
       with:
         fetch-depth: 1
     - name: Build new version
+      id: build
       shell: bash {0}
       run: |
         cur_version=$(grep 'WatchNixtoons2" version' addon.xml | cut -f4 -d " " | cut -c 10- | cut -c -4)
@@ -41,12 +42,13 @@ jobs:
           branch=".${{ github.event.inputs.branch }}"
         fi
         mkdir plugin.video.watchnixtoons2${branch}
-        cp addon.xml Default.py *.jpg *.png plugin.video.watchnixtoons2.kodi19/.
-        cp -R Lib/ plugin.video.watchnixtoons2.kodi19/
+        cp addon.xml Default.py *.jpg *.png plugin.video.watchnixtoons2${branch}/.
+        cp -R Lib/ plugin.video.watchnixtoons2${branch}/
         cp -R resources/ plugin.video.watchnixtoons2${branch}/
-        zip -9 -r ./plugin.video.watchnixtoons2${branch}-${new_version}.zip plugin.video.watchnixtoons2.kodi19/
+        zip -9 -r ./plugin.video.watchnixtoons2${branch}-${new_version}.zip plugin.video.watchnixtoons2${branch}/
         rm -rf plugin.video.watchnixtoons2${branch}
-    - uses: actions/upload-artifact@${branch}
+        echo "::set-output name=file::plugin.video.watchnixtoons2${branch}-${new_version}.zip"
+    - uses: actions/upload-artifact@gh-actions-test
       with:
-        name: plugin.video.watchnixtoons2${branch}-${new_version}.zip
-        path: plugin.video.watchnixtoons2${branch}-${new_version}.zip
+        name: ${{steps.build.outputs.file}}
+        path: ${{steps.build.outputs.file}}
