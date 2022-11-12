@@ -15,23 +15,23 @@ on:
         default: 'gh-actions-test'
         # Input has to be provided for the workflow to run
         required: true
-      change_note[0]:
+      change_note1:
         description: 'Update 1'
  #       default: ''
         required: true
-      change_note[1]:
+      change_note2:
         description: 'Update 2'
 #        default: ''
         required: false
-      change_note[2]:
+      change_note3:
         description: 'Update 3'
 #        default: ''
         required: false
-      change_note[3]:
+      change_note4:
         description: 'Update 4'
 #        default: ''
         required: false
-      change_note[4]:
+      change_note5:
         description: 'Update 5'
 #        default: ''
         required: false
@@ -64,8 +64,13 @@ jobs:
         sed -i "/toons2\" version\=\"/c\<addon id\=\"plugin.video.watchnixtoons2${branch}\" name\=\"WatchNixtoons2\" version\=\"${new_version}\" provider-name\=\"doko\/Christian-Haitian\">" addon.xml 
         mkdir plugin.video.watchnixtoons2${branch}
         sed -i "/Cartoons \&amp\; Anime/s//Cartoons \&amp\; Anime\n\n[B]${new_version}[\/B]/" addon.xml
-        for note in ${{ github.event.inputs.change_note[@] }}; do
+        let i=1
+        for note in ${{ github.event.inputs.change_note${i} }}; do
           sed -i "/Cartoons \&amp\; Anime\n\n[B]${new_version}[\/B]/s//Cartoons \&amp\; Anime\n\n[B]${new_version}[\/B]\n- ${note}/" addon.xml
+          i++
+          if (( i > 5 )); then
+            break
+          fi
         done
         cp addon.xml Default.py *.jpg *.png plugin.video.watchnixtoons2${branch}/.
         cp -R Lib/ plugin.video.watchnixtoons2${branch}/
