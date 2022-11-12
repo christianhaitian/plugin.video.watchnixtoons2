@@ -51,4 +51,4 @@ jobs:
     - uses: actions/upload-artifact@master
       with:
         name: ${{steps.build.outputs.file}}
-        path: ${{steps.build.outputs.file}}
+        path: ${{ github.workspace }}
