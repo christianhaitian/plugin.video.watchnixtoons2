@@ -27,6 +27,7 @@ jobs:
     steps:
     # Runs a single command using the runners shell
     - name: Build new version
+      shell: bash {0}
       run: |
         cur_version=$(grep 'WatchNixtoons2" version' addon.xml | cut -f4 -d " " | cut -c 10- | cut -c -4)
         new_version=$(echo $cur_version | awk '{print $1+0.01}')
