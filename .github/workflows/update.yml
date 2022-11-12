@@ -1,4 +1,4 @@
-# This is a basic workflow that is manually triggered
+# This is a basic workflow that is manually triggered to update the kodi plugin
 
 name: Manual update
 
@@ -32,7 +32,7 @@ jobs:
         fetch-depth: 1
     - name: Build new version
       id: build
-      shell: bash {0}
+#     shell: bash {0}
       run: |
         cur_version=$(grep 'WatchNixtoons2" version' addon.xml | cut -f4 -d " " | cut -c 10- | cut -c -4)
         new_version=$(echo $cur_version | awk '{print $1+0.01}')
@@ -41,6 +41,7 @@ jobs:
         else
           branch=".${{ github.event.inputs.branch }}"
         fi
+        sed -i "/toons2\" version\=\"/c\<addon id\=\"plugin.video.watchnixtoons2${branch}\" name\=\"WatchNixtoons2\" version\=\"${new_version}\" provider-name\=\"doko\/Christian-Haitian\">" addon.xml 
         mkdir plugin.video.watchnixtoons2${branch}
         cp addon.xml Default.py *.jpg *.png plugin.video.watchnixtoons2${branch}/.
         cp -R Lib/ plugin.video.watchnixtoons2${branch}/
