@@ -35,10 +35,10 @@ jobs:
       run: |
         cur_version=$(grep 'WatchNixtoons2" version' addon.xml | cut -f4 -d " " | cut -c 10- | cut -c -4)
         new_version=$(echo $cur_version | awk '{print $1+0.01}')
-        if [[ ${{ github.event.inputs.name }} == "master" ]]; then
+        if [[ ${{ github.event.inputs.branch }} == "master" ]]; then
           branch=""
         else
-          branch=".${{ github.event.inputs.name }}"
+          branch=".${{ github.event.inputs.branch }}"
         fi
         mkdir plugin.video.watchnixtoons2${branch}
         cp addon.xml Default.py *.jpg *.png plugin.video.watchnixtoons2.kodi19/.
