@@ -46,3 +46,7 @@ jobs:
         cp -R resources/ plugin.video.watchnixtoons2${branch}/
         zip -9 -r ./plugin.video.watchnixtoons2${branch}-${new_version}.zip plugin.video.watchnixtoons2.kodi19/
         rm -rf plugin.video.watchnixtoons2${branch}
+    - uses: actions/upload-artifact@${branch}
+      with:
+        name: plugin.video.watchnixtoons2${branch}-${new_version}.zip
+        path: plugin.video.watchnixtoons2${branch}-${new_version}.zip
