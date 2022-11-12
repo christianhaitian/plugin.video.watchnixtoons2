@@ -50,7 +50,7 @@ jobs:
         rm -rf plugin.video.watchnixtoons2${branch}
         git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
-        git add plugin.video.watchnixtoons2${branch}-${new_version}.zip
+        git add plugin.video.watchnixtoons2${branch}-${new_version}.zip addon.xml
         git commit -m "Add plugin.video.watchnixtoons2${branch}-${new_version}.zip to repo"
 #        echo "::set-output name=file::plugin.video.watchnixtoons2${branch}-${new_version}.zip"
     - uses: ad-m/github-push-action@master
