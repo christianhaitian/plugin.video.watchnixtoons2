@@ -15,6 +15,26 @@ on:
         default: 'gh-actions-test'
         # Input has to be provided for the workflow to run
         required: true
+      change_note[0]:
+        description: 'Update 1'
+        default: ''
+        required: true
+      change_note[1]:
+        description: 'Update 2'
+        default: ''
+        required: false
+      change_note[2]:
+        description: 'Update 3'
+        default: ''
+        required: false
+      change_note[3]:
+        description: 'Update 4'
+        default: ''
+        required: false
+      change_note[4]:
+        description: 'Update 5'
+        default: ''
+        required: false
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -43,6 +63,10 @@ jobs:
         fi
         sed -i "/toons2\" version\=\"/c\<addon id\=\"plugin.video.watchnixtoons2${branch}\" name\=\"WatchNixtoons2\" version\=\"${new_version}\" provider-name\=\"doko\/Christian-Haitian\">" addon.xml 
         mkdir plugin.video.watchnixtoons2${branch}
+        sed -i "/Cartoons \&amp\; Anime/s//Cartoons \&amp\; Anime\n\n[B]${new_version}[\/B]\n- ${{ github.event.inputs.change_note1 }}/" addon.xml
+        for note in ${{ github.event.inputs.change_note[@] }}; do
+          sed -i "/Cartoons \&amp\; Anime\n\n[B]${new_version}[\/B]/s//Cartoons \&amp\; Anime\n\n[B]${new_version}[\/B]\n- ${note}/" addon.xml
+        done
         cp addon.xml Default.py *.jpg *.png plugin.video.watchnixtoons2${branch}/.
         cp -R Lib/ plugin.video.watchnixtoons2${branch}/
         cp -R resources/ plugin.video.watchnixtoons2${branch}/
