@@ -109,9 +109,8 @@ jobs:
         cd plugin.video.watchnixtoons2${branch}
         wget "https://github.com/christianhaitian/plugin.video.watchnixtoons2/raw/${branch4repo}/plugin.video.watchnixtoons2${branch}-${new_version}.zip"
         cd ..
-        git config --local user.email "${USER_EMAIL}"
-        git config --local user.name "${USER_NAME}"
-        #git config --local --unset-all "http.https://github.com/.extraheader"
+        git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
         git add plugin.video.watchnixtoons2${branch}/plugin.video.watchnixtoons2${branch}-${new_version}.zip
         git add addons.xml
         git commit -m "Add plugin.video.watchnixtoons2${branch}-${new_version}.zip to repo"
@@ -122,5 +121,3 @@ jobs:
         branch: ${{ env.branch }}
         branch4repo: ${{ env.branch4repo }}
         notes: ${{ env.notes }}
-        USER_EMAIL: ${{ secrets.USER_EMAIL }}
-        USER_NAME: ${{ secrets.USER_NAME }}
