@@ -72,7 +72,7 @@ jobs:
         sed -i "/Cartoons \&amp\; Anime/s//Cartoons \&amp\; Anime\n\n[B]${new_version}[\/B]/" addon.xml
         for note in "${notes[@]}"
         do
-          sed -i "/Cartoons \&amp\; Anime\n\n[B]${new_version}[\/B]/s//Cartoons \&amp\; Anime\n\n[B]${new_version}[\/B]\n- ${note}/" addon.xml
+          sed -i "/\[B\]$new_version\[\/B\]/s//\[B\]$new_version\[\/B\]\n- $note/" addon.xml
         done
         cp addon.xml Default.py *.jpg *.png plugin.video.watchnixtoons2${branch}/.
         cp -R Lib/ plugin.video.watchnixtoons2${branch}/
