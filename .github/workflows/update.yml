@@ -52,7 +52,7 @@ jobs:
         fetch-depth: 1
     - name: Build new version
       id: build
-#     shell: bash {0}
+      shell: bash {0}
       env:
         notes[0]: ${{ github.event.inputs.change_note1 }}
         notes[1]: ${{ github.event.inputs.change_note2 }}
