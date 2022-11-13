@@ -64,7 +64,7 @@ jobs:
         sed -i "/toons2\" version\=\"/c\<addon id\=\"plugin.video.watchnixtoons2${branch}\" name\=\"WatchNixtoons2\" version\=\"${new_version}\" provider-name\=\"doko\/Christian-Haitian\">" addon.xml 
         mkdir plugin.video.watchnixtoons2${branch}
         sed -i "/Cartoons \&amp\; Anime/s//Cartoons \&amp\; Anime\n\n[B]${new_version}[\/B]/" addon.xml
-        notes=( "${{ github.event.inputs.change_note5 }}" "${{ github.event.inputs.change_note4 }}" "${{ github.event.inputs.change_note3 }}" "${{ github.event.inputs.change_note2 }}" "${{ github.event.inputs.change_note1 }}" )
+        #notes=( "${{ github.event.inputs.change_note5 }}" "${{ github.event.inputs.change_note4 }}" "${{ github.event.inputs.change_note3 }}" "${{ github.event.inputs.change_note2 }}" "${{ github.event.inputs.change_note1 }}" )
         echo "notes=$notes" >> $GITHUB_ENV
         for note in "${notes[@]}"
         do
@@ -81,6 +81,8 @@ jobs:
         git config --local user.name "github-actions[bot]"
         git add plugin.video.watchnixtoons2${branch}-${new_version}.zip addon.xml
         git commit -m "Add plugin.video.watchnixtoons2${branch}-${new_version}.zip to repo"
+      env:
+        notes=( "${{ github.event.inputs.change_note5 }}" "${{ github.event.inputs.change_note4 }}" "${{ github.event.inputs.change_note3 }}" "${{ github.event.inputs.change_note2 }}" "${{ github.event.inputs.change_note1 }}" )
     - name: Push new watchnixtoons2 premium kodi plugin version to plugin repo
       uses: ad-m/github-push-action@master
       with:
@@ -98,7 +100,12 @@ jobs:
       shell: bash {0}
       run: |
         # Setting the new version of the addon here
-        sed -i "/toons2$branch\" name\=\"WatchNixtoons2\" version\=\"/c\<addon id\=\"plugin.video.watchnixtoons2$branch\" name\=\"WatchNixtoons2\" version\=\"$new_version\" provider-name\=\"doko\/Christian-Haitian\">" addons.xml 
+        if [[ "$branch" == *"test"* ]]; then
+          branchtest=""
+        else
+          branchtest="$branch"
+        fi
+        sed -i "/toons2$branchtest\" name\=\"WatchNixtoons2\" version\=\"/c\<addon id\=\"plugin.video.watchnixtoons2$branchtest\" name\=\"WatchNixtoons2\" version\=\"$new_version\" provider-name\=\"doko\/Christian-Haitian\">" addons.xml 
         sed -i "/\[B\]$cur_version\[\/B\]/s//\[B\]$new_version\[\/B\]\n\n\[B\]$cur_version\[\/B\]/" addons.xml
         for note in "${notes[@]}"
         do
@@ -122,4 +129,3 @@ jobs:
         new_version: ${{ env.new_version }}
         branch: ${{ env.branch }}
         branch4repo: ${{ env.branch4repo }}
-        notes: ${{ env.notes }}
