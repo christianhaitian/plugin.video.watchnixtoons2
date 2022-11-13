@@ -82,6 +82,7 @@ jobs:
     - name: checkout_chrepo
       uses: actions/checkout@v3
       with:
+        repository: christianhaitian/ch.repo
         ref: gh-actions-test
         fetch-depth: 1
     - name: Add updated plugin to ch.repo
