@@ -70,7 +70,7 @@ jobs:
         sed -i "/toons2\" version\=\"/c\<addon id\=\"plugin.video.watchnixtoons2${branch}\" name\=\"WatchNixtoons2\" version\=\"${new_version}\" provider-name\=\"doko\/Christian-Haitian\">" addon.xml 
         mkdir plugin.video.watchnixtoons2${branch}
         sed -i "/Cartoons \&amp\; Anime/s//Cartoons \&amp\; Anime\n\n[B]${new_version}[\/B]/" addon.xml
-        for note in "${notes[@]}"
+        for note in "$notes[@]"
         do
           sed -i "/\[B\]$new_version\[\/B\]/s//\[B\]$new_version\[\/B\]\n- $note/" addon.xml
         done
