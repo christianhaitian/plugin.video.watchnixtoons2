@@ -88,7 +88,7 @@ jobs:
     - name: checkout_chrepo
       uses: actions/checkout@v3
       with:
-        # token: ${{ secrets.PA_TOKEN || github.token }}
+        token: ${{ secrets.CHREPO_TOKEN }}
         repository: christianhaitian/ch.repo
         ref: gh-actions-test
         persist-credentials: true
