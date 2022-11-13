@@ -85,7 +85,6 @@ jobs:
       uses: actions/checkout@v3
       with:
         repository: christianhaitian/ch.repo
-        path: chrepo
         ref: gh-actions-test
         fetch-depth: 1
     - name: Add updated plugin to ch.repo
@@ -101,7 +100,6 @@ jobs:
             sed -i "/\[B\]$new_version\[\/B\]/s//\[B\]$new_version\[\/B\]\n- $note/" addons.xml
           fi
         done
-        
         cd plugin.video.watchnixtoons2${branch}
         wget "https://github.com/christianhaitian/plugin.video.watchnixtoons2/raw/${branch4repo}/plugin.video.watchnixtoons2${branch}-${new_version}.zip"
         cd ..
@@ -109,14 +107,10 @@ jobs:
         git config --local user.name "github-actions[bot]"
         git add plugin.video.watchnixtoons2${branch}/plugin.video.watchnixtoons2${branch}-${new_version}.zip addons.xml
         git commit -m "Add plugin.video.watchnixtoons2${branch}-${new_version}.zip to repo"
+        git push
       env:
         cur_version: ${{ env.cur_version }}
         new_version: ${{ env.new_version }}
         branch: ${{ env.branch }}
         branch4repo: ${{ env.branch4repo }}
         notes: ${{ env.notes }}
-    - name: Push new watchnixtoons2 premium kodi plugin version to ch.repo
-      uses: ad-m/github-push-action@master
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        branch: gh-actions-test
