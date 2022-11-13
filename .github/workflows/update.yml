@@ -43,7 +43,7 @@ jobs:
       uses: actions/checkout@v2
       with:
         fetch-depth: 1
-    - name: Build new version
+    - name: Build new watchnixtoons2 premium kodi plugin version
       id: build
       shell: bash {0}
       run: |
@@ -76,4 +76,4 @@ jobs:
 #        echo "::set-output name=file::plugin.video.watchnixtoons2${branch}-${new_version}.zip"
     - uses: ad-m/github-push-action@master
       with:
-        branch: ${GITHUB_REF##*/}
+        branch: ${{ github.ref }}
