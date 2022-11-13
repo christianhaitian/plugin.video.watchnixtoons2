@@ -25,22 +25,15 @@ on:
         description: 'Change'
         required: false
 
+permissions:
+  contents: write
+  pull-requests: write
+  
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "greet"
   build:
     # The type of runner that the job will run on
-    permissions:
-      actions: write
-      checks: write
-      contents: write
-      deployments: write
-      issues: write
-      packages: write
-      pull-requests: write
-      repository-projects: write
-      security-events: write
-      statuses: write
     runs-on: ubuntu-latest
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -118,7 +111,7 @@ jobs:
         cd ..
         git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
-        git config --local --unset-all "http.https://github.com/.extraheader"
+        #git config --local --unset-all "http.https://github.com/.extraheader"
         git add plugin.video.watchnixtoons2${branch}/plugin.video.watchnixtoons2${branch}-${new_version}.zip
         git add addons.xml
         git commit -m "Add plugin.video.watchnixtoons2${branch}-${new_version}.zip to repo"
