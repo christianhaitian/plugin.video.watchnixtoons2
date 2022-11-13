@@ -120,10 +120,15 @@ jobs:
         git add plugin.video.watchnixtoons2${branch}/plugin.video.watchnixtoons2${branch}-${new_version}.zip
         git add addons.xml
         git commit -m "Add plugin.video.watchnixtoons2${branch}-${new_version}.zip to repo"
-        git push
+        # git push
       env:
         cur_version: ${{ env.cur_version }}
         new_version: ${{ env.new_version }}
         branch: ${{ env.branch }}
         branch4repo: ${{ env.branch4repo }}
         notes: ${{ env.notes }}
+    - name: Push new watchnixtoons2 premium kodi plugin version to ch.repo
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: gh-actions-test
