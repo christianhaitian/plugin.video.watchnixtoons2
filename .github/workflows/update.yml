@@ -3,41 +3,42 @@
 name: Manual update
 
 # Controls when the action will run. Workflow runs when manually triggered using the UI
-# or API.
+# or API.  We do this in order to make sure to get update notes.
 on:
   workflow_dispatch:
     # Inputs the workflow accepts.  This is where changes will be noted and added to the addon.xml file later.
     inputs:
       change_note1:
-        description: 'Change'
+        description: 'Change #1'
 #       default: ''
         required: true
       change_note2:
-        description: 'Change'
+        description: 'Change #2'
         required: false
       change_note3:
-        description: 'Change'
+        description: 'Change #3'
         required: false
       change_note4:
-        description: 'Change'
+        description: 'Change #4'
         required: false
       change_note5:
-        description: 'Change'
+        description: 'Change #5'
         required: false
 
+# Gotta set permissions especially for ch.repo or pushed may fail.
 permissions:
   contents: write
   pull-requests: write
   
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "greet"
+  # This workflow contains a single job.
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-    # Runs a single command using the runners shell
+    # Time to pull the proper branch of the watchnixtoons2 repo to start the plugin update
     - name: checkout_plugin
       uses: actions/checkout@v3
       with:
@@ -47,12 +48,15 @@ jobs:
       id: build_plugin
       shell: bash {0}
       run: |
-        # Get current version from addon.xml
+
+        # Get current version from addon.xml and make it available in the environment for later use
         cur_version=$(grep 'WatchNixtoons2" version' addon.xml | cut -f4 -d " " | cut -c 10- | cut -c -4)
         echo "cur_version=$cur_version" >> $GITHUB_ENV
-        # Set net version to be inserted into addon.xml later
+
+        # Set net version to be inserted into addon.xml later and make it available in the environment for later use
         new_version=$(echo $cur_version | awk '{print $1+0.01}')
         echo "new_version=$new_version" >> $GITHUB_ENV
+
         if [[ ${GITHUB_REF##*/} == "master" ]]; then
           branch=""
         else
@@ -60,49 +64,60 @@ jobs:
         fi
         echo "branch=$branch" >> $GITHUB_ENV
         echo "branch4repo=${GITHUB_REF##*/}" >> $GITHUB_ENV
-        # Setting the new version of the addon here
+
+        # Setting the new version of the addon here and adding change notes from input
         sed -i "/toons2\" version\=\"/c\<addon id\=\"plugin.video.watchnixtoons2${branch}\" name\=\"WatchNixtoons2\" version\=\"${new_version}\" provider-name\=\"doko\/Christian-Haitian\">" addon.xml 
-        mkdir plugin.video.watchnixtoons2${branch}
         sed -i "/Cartoons \&amp\; Anime/s//Cartoons \&amp\; Anime\n\n[B]${new_version}[\/B]/" addon.xml
         notes=( "${{ github.event.inputs.change_note5 }}" "${{ github.event.inputs.change_note4 }}" "${{ github.event.inputs.change_note3 }}" "${{ github.event.inputs.change_note2 }}" "${{ github.event.inputs.change_note1 }}" )
-        echo "notes=$notes" >> $GITHUB_ENV
         for note in "${notes[@]}"
         do
           if [ ! -z "$note" ]; then
             sed -i "/\[B\]$new_version\[\/B\]/s//\[B\]$new_version\[\/B\]\n- $note/" addon.xml
           fi
         done
+
+        # Creating new plugin package version here
+        mkdir plugin.video.watchnixtoons2${branch}
         cp addon.xml Default.py *.jpg *.png plugin.video.watchnixtoons2${branch}/.
         cp -R Lib/ plugin.video.watchnixtoons2${branch}/
         cp -R resources/ plugin.video.watchnixtoons2${branch}/
         zip -9 -r ./plugin.video.watchnixtoons2${branch}-${new_version}.zip plugin.video.watchnixtoons2${branch}/
         rm -rf plugin.video.watchnixtoons2${branch}
+
+        # Setup and commit plugin and updated addon.xml
         git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
         git add plugin.video.watchnixtoons2${branch}-${new_version}.zip addon.xml
         git commit -m "Add plugin.video.watchnixtoons2${branch}-${new_version}.zip to repo"
+
     - name: Push new watchnixtoons2 premium kodi plugin version to plugin repo
       uses: ad-m/github-push-action@master
       with:
         branch: ${{ github.ref_name }}
+
+    # Both the watchnixtoons2 repo and ch.repo repo need to have the same secret token set or the push willl fail
     - name: checkout_chrepo
       uses: actions/checkout@v3
       with:
         token: ${{ secrets.CHREPO_TOKEN }}
         repository: christianhaitian/ch.repo
-        ref: gh-actions-test
+        ref: master
         persist-credentials: true
         fetch-depth: 0
+
     - name: Add updated plugin to ch.repo
       id: build_repo
       shell: bash {0}
       run: |
+
         # Setting the new version of the addon here
         if [[ "$branch" == *"test"* ]]; then
           branchtest=""
         else
           branchtest="$branch"
         fi
+
+        # Setting the new version of the addon here and adding change notes from input
         sed -i "/toons2$branchtest\" name\=\"WatchNixtoons2\" version\=\"/c\<addon id\=\"plugin.video.watchnixtoons2$branchtest\" name\=\"WatchNixtoons2\" version\=\"$new_version\" provider-name\=\"doko\/Christian-Haitian\">" addons.xml 
         sed -i "/\[B\]$cur_version\[\/B\]/s//\[B\]$new_version\[\/B\]\n\n\[B\]$cur_version\[\/B\]/" addons.xml
         notes=( "${{ github.event.inputs.change_note5 }}" "${{ github.event.inputs.change_note4 }}" "${{ github.event.inputs.change_note3 }}" "${{ github.event.inputs.change_note2 }}" "${{ github.event.inputs.change_note1 }}" )
@@ -112,15 +127,20 @@ jobs:
             sed -i "/\[B\]$new_version\[\/B\]/s//\[B\]$new_version\[\/B\]\n- $note/" addons.xml
           fi
         done
+
+        # Adding updated plugin package and addon.xml from watchnixtoons2 repo
         cd plugin.video.watchnixtoons2${branch}
         wget "https://github.com/christianhaitian/plugin.video.watchnixtoons2/raw/${branch4repo}/plugin.video.watchnixtoons2${branch}-${new_version}.zip"
         rm -f addon.xml
         wget "https://github.com/christianhaitian/plugin.video.watchnixtoons2/raw/${branch4repo}/addon.xml"
         cd ..
-        cur_md5=$(cat addons.xml.md5)
+
         # Set new md5
+        cur_md5=$(cat addons.xml.md5)
         new_md5=$(echo $cur_md5 | awk '{print $1+1}')
         echo $new_md5 > addons.xml.md5
+
+        # Setup, commit and push plugin, updated addons.xml, and updated md5
         git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
         git add plugin.video.watchnixtoons2${branch}/plugin.video.watchnixtoons2${branch}-${new_version}.zip 
