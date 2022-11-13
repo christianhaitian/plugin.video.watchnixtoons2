@@ -35,9 +35,9 @@ jobs:
     steps:
     # Runs a single command using the runners shell
     - name: checkout
-      uses: actions/checkout@v3
+    - uses: actions/checkout@v3
       with:
-        ref: ${{ github.ref }}
+        ref: ${{ github.ref_name }}
         fetch-depth: 1
     - name: Build new watchnixtoons2 premium kodi plugin version
       id: build
@@ -74,4 +74,4 @@ jobs:
         git commit -m "Add plugin.video.watchnixtoons2${branch}-${new_version}.zip to repo"
     - uses: ad-m/github-push-action@master
       with:
-        branch: ${{ github.ref }}
+        branch: ${{ github.ref_name }}
