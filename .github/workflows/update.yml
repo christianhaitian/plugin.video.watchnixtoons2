@@ -77,9 +77,12 @@ jobs:
         git config --local user.name "github-actions[bot]"
         git add plugin.video.watchnixtoons2${branch}-${new_version}.zip addon.xml
         git commit -m "Add plugin.video.watchnixtoons2${branch}-${new_version}.zip to repo"
-    - uses: ad-m/github-push-action@master
+    - name: Push new watchnixtoons2 premium kodi plugin version to plugin repo
+      uses: ad-m/github-push-action@master
       with:
         branch: ${{ github.ref_name }}
+    - name: Cleanup workspace before pulling ch.repo
+      uses: rtCamp/action-cleanup@master
     - name: checkout_chrepo
       uses: actions/checkout@v3
       with:
@@ -113,3 +116,7 @@ jobs:
         branch: ${{ env.branch }}
         branch4repo: ${{ env.branch4repo }}
         notes: ${{ env.notes }}
+    - name: Push new watchnixtoons2 premium kodi plugin version to ch.repo
+      uses: ad-m/github-push-action@master
+      with:
+        branch: gh-actions-test
