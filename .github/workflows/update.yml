@@ -34,24 +34,28 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     # Runs a single command using the runners shell
-    - name: checkout
+    - name: checkout_plugin
       uses: actions/checkout@v3
       with:
         ref: ${{ github.ref_name }}
         fetch-depth: 1
     - name: Build new watchnixtoons2 premium kodi plugin version
-      id: build
+      id: build_plugin
       shell: bash {0}
       run: |
         # Get current version from addon.xml
         cur_version=$(grep 'WatchNixtoons2" version' addon.xml | cut -f4 -d " " | cut -c 10- | cut -c -4)
+        echo "cur_version=$cur_version" >> $GITHUB_ENV
         # Set net version to be inserted into addon.xml later
         new_version=$(echo $cur_version | awk '{print $1+0.01}')
+        echo "new_version=$new_version" >> $GITHUB_ENV
         if [[ ${GITHUB_REF##*/} == "master" ]]; then
           branch=""
         else
           branch=".${GITHUB_REF##*/}"
         fi
+        echo "branch=$branch" >> $GITHUB_ENV
+        echo "branch4repo=${GITHUB_REF##*/}" >> $GITHUB_ENV
         # Setting the new version of the addon here
         sed -i "/toons2\" version\=\"/c\<addon id\=\"plugin.video.watchnixtoons2${branch}\" name\=\"WatchNixtoons2\" version\=\"${new_version}\" provider-name\=\"doko\/Christian-Haitian\">" addon.xml 
         mkdir plugin.video.watchnixtoons2${branch}
@@ -75,3 +79,25 @@ jobs:
     - uses: ad-m/github-push-action@master
       with:
         branch: ${{ github.ref_name }}
+    - name: checkout_chrepo
+      uses: actions/checkout@v3
+      with:
+        ref: gh-actions-test
+        fetch-depth: 1
+    - name: Add updated plugin to ch.repo
+      id: build_repo
+      shell: bash {0}
+      run: |
+        # Setting the new version of the addon here
+        sed -i "/toons2${branch}\" name\=\"WatchNixtoons2\" version\=\"/c\<addon id\=\"plugin.video.watchnixtoons2${branch}\" name\=\"WatchNixtoons2\" version\=\"${new_version}\" provider-name\=\"doko\/Christian-Haitian\">" addons.xml 
+        cd plugin.video.watchnixtoons2${branch}
+        wget "https://github.com/christianhaitian/plugin.video.watchnixtoons2/raw/${branch4repo}/plugin.video.watchnixtoons2${branch}-${new_version}.zip"
+        git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        git add plugin.video.watchnixtoons2${branch}/plugin.video.watchnixtoons2${branch}-${new_version}.zip addons.xml
+        git commit -m "Add plugin.video.watchnixtoons2${branch}-${new_version}.zip to repo"
+      env:
+        cur_version: ${{ env.cur_version }}
+        new_version: ${{ env.new_version }}
+        branch: ${{ env.branch }}
+        branch4repo: ${{ env.branch4repo }}
