@@ -81,8 +81,6 @@ jobs:
       uses: ad-m/github-push-action@master
       with:
         branch: ${{ github.ref_name }}
-    - name: Cleanup workspace before pulling ch.repo
-      uses: rtCamp/action-cleanup@master
     - name: checkout_chrepo
       uses: actions/checkout@v3
       with:
