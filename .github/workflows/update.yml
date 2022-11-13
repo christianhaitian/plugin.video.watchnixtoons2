@@ -98,6 +98,7 @@ jobs:
         # token: ${{ secrets.PA_TOKEN || github.token }}
         repository: christianhaitian/ch.repo
         ref: gh-actions-test
+        persist-credentials: false
         fetch-depth: 0
     - name: Add updated plugin to ch.repo
       id: build_repo
