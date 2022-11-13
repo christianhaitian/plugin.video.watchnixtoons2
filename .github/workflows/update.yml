@@ -95,10 +95,10 @@ jobs:
     - name: checkout_chrepo
       uses: actions/checkout@v3
       with:
-        token: ${{ secrets.PA_TOKEN || github.token }}
+        # token: ${{ secrets.PA_TOKEN || github.token }}
         repository: christianhaitian/ch.repo
         ref: gh-actions-test
-        fetch-depth: 1
+        fetch-depth: 0
     - name: Add updated plugin to ch.repo
       id: build_repo
       shell: bash {0}
@@ -130,5 +130,5 @@ jobs:
     - name: Push new watchnixtoons2 premium kodi plugin version to ch.repo
       uses: ad-m/github-push-action@master
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
+        github_token: ${{ secrets.PA_TOKEN }}
         branch: gh-actions-test
