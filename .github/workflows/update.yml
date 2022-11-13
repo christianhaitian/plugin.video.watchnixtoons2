@@ -10,23 +10,19 @@ on:
     inputs:
       change_note1:
         description: 'Change'
- #       default: ''
+#       default: ''
         required: true
       change_note2:
         description: 'Change'
-#        default: ''
         required: false
       change_note3:
         description: 'Change'
-#        default: ''
         required: false
       change_note4:
         description: 'Change'
-#        default: ''
         required: false
       change_note5:
         description: 'Change'
-#        default: ''
         required: false
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
@@ -35,7 +31,6 @@ jobs:
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     # Runs a single command using the runners shell
@@ -47,13 +42,16 @@ jobs:
       id: build
       shell: bash {0}
       run: |
+        # Get current version from addon.xml
         cur_version=$(grep 'WatchNixtoons2" version' addon.xml | cut -f4 -d " " | cut -c 10- | cut -c -4)
+        # Set net version to be inserted into addon.xml later
         new_version=$(echo $cur_version | awk '{print $1+0.01}')
         if [[ ${GITHUB_REF##*/} == "master" ]]; then
           branch=""
         else
           branch=".${GITHUB_REF##*/}"
         fi
+        # Setting the new version of the addon here
         sed -i "/toons2\" version\=\"/c\<addon id\=\"plugin.video.watchnixtoons2${branch}\" name\=\"WatchNixtoons2\" version\=\"${new_version}\" provider-name\=\"doko\/Christian-Haitian\">" addon.xml 
         mkdir plugin.video.watchnixtoons2${branch}
         sed -i "/Cartoons \&amp\; Anime/s//Cartoons \&amp\; Anime\n\n[B]${new_version}[\/B]/" addon.xml
@@ -73,7 +71,6 @@ jobs:
         git config --local user.name "github-actions[bot]"
         git add plugin.video.watchnixtoons2${branch}-${new_version}.zip addon.xml
         git commit -m "Add plugin.video.watchnixtoons2${branch}-${new_version}.zip to repo"
-#        echo "::set-output name=file::plugin.video.watchnixtoons2${branch}-${new_version}.zip"
     - uses: ad-m/github-push-action@master
       with:
         branch: ${{ github.ref }}
