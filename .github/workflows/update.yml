@@ -76,4 +76,4 @@ jobs:
 #        echo "::set-output name=file::plugin.video.watchnixtoons2${branch}-${new_version}.zip"
     - uses: ad-m/github-push-action@master
       with:
-        branch: ${{ github.event.inputs.branch }}
+        branch: ${GITHUB_REF##*/}
