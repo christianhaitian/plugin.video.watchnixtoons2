@@ -95,6 +95,7 @@ jobs:
     - name: checkout_chrepo
       uses: actions/checkout@v3
       with:
+        token: ${{ secrets.PA_TOKEN || github.token }}
         repository: christianhaitian/ch.repo
         ref: gh-actions-test
         fetch-depth: 1
