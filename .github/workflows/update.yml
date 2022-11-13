@@ -98,7 +98,7 @@ jobs:
       shell: bash {0}
       run: |
         # Setting the new version of the addon here
-        sed -i "/toons2${branch}\" name\=\"WatchNixtoons2\" version\=\"/c\<addon id\=\"plugin.video.watchnixtoons2${branch}\" name\=\"WatchNixtoons2\" version\=\"${new_version}\" provider-name\=\"doko\/Christian-Haitian\">" addons.xml 
+        sed -i "/toons2$branch\" name\=\"WatchNixtoons2\" version\=\"/c\<addon id\=\"plugin.video.watchnixtoons2$branch\" name\=\"WatchNixtoons2\" version\=\"$new_version\" provider-name\=\"doko\/Christian-Haitian\">" addons.xml 
         sed -i "/\[B\]$cur_version\[\/B\]/s//\[B\]$new_version\[\/B\]\n\n\[B\]$cur_version\[\/B\]/" addons.xml
         for note in "${notes[@]}"
         do
@@ -108,6 +108,7 @@ jobs:
         done
         cd plugin.video.watchnixtoons2${branch}
         wget "https://github.com/christianhaitian/plugin.video.watchnixtoons2/raw/${branch4repo}/plugin.video.watchnixtoons2${branch}-${new_version}.zip"
+        rm -f addon.xml
         wget "https://github.com/christianhaitian/plugin.video.watchnixtoons2/raw/${branch4repo}/addon.xml"
         cd ..
         git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
