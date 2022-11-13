@@ -61,6 +61,7 @@ jobs:
         mkdir plugin.video.watchnixtoons2${branch}
         sed -i "/Cartoons \&amp\; Anime/s//Cartoons \&amp\; Anime\n\n[B]${new_version}[\/B]/" addon.xml
         notes=( "${{ github.event.inputs.change_note5 }}" "${{ github.event.inputs.change_note4 }}" "${{ github.event.inputs.change_note3 }}" "${{ github.event.inputs.change_note2 }}" "${{ github.event.inputs.change_note1 }}" )
+        echo "notes=$notes" >> $GITHUB_ENV
         for note in "${notes[@]}"
         do
           if [ ! -z "$note" ]; then
@@ -91,8 +92,17 @@ jobs:
       run: |
         # Setting the new version of the addon here
         sed -i "/toons2${branch}\" name\=\"WatchNixtoons2\" version\=\"/c\<addon id\=\"plugin.video.watchnixtoons2${branch}\" name\=\"WatchNixtoons2\" version\=\"${new_version}\" provider-name\=\"doko\/Christian-Haitian\">" addons.xml 
+        sed -i "/\[B\]$cur_version\[\/B\]/s//\[B\]$new_version\[\/B\]\n\n\[B\]$cur_version\[\/B\]/" addons.xml
+        for note in "${notes[@]}"
+        do
+          if [ ! -z "$note" ]; then
+            sed -i "/\[B\]$new_version\[\/B\]/s//\[B\]$new_version\[\/B\]\n- $note/" addons.xml
+          fi
+        done
+        
         cd plugin.video.watchnixtoons2${branch}
         wget "https://github.com/christianhaitian/plugin.video.watchnixtoons2/raw/${branch4repo}/plugin.video.watchnixtoons2${branch}-${new_version}.zip"
+        cd ..
         git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
         git add plugin.video.watchnixtoons2${branch}/plugin.video.watchnixtoons2${branch}-${new_version}.zip addons.xml
@@ -102,3 +112,4 @@ jobs:
         new_version: ${{ env.new_version }}
         branch: ${{ env.branch }}
         branch4repo: ${{ env.branch4repo }}
+        notes: ${{ env.notes }}
