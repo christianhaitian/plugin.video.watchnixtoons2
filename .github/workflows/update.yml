@@ -117,4 +117,5 @@ jobs:
     - name: Push new watchnixtoons2 premium kodi plugin version to ch.repo
       uses: ad-m/github-push-action@master
       with:
+        repository: christianhaitian/ch.repo
         branch: gh-actions-test
