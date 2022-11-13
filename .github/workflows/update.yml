@@ -82,7 +82,7 @@ jobs:
         git add plugin.video.watchnixtoons2${branch}-${new_version}.zip addon.xml
         git commit -m "Add plugin.video.watchnixtoons2${branch}-${new_version}.zip to repo"
       env:
-        notes=( "${{ github.event.inputs.change_note5 }}" "${{ github.event.inputs.change_note4 }}" "${{ github.event.inputs.change_note3 }}" "${{ github.event.inputs.change_note2 }}" "${{ github.event.inputs.change_note1 }}" )
+        notes: ( "${{ github.event.inputs.change_note5 }}" "${{ github.event.inputs.change_note4 }}" "${{ github.event.inputs.change_note3 }}" "${{ github.event.inputs.change_note2 }}" "${{ github.event.inputs.change_note1 }}" )
     - name: Push new watchnixtoons2 premium kodi plugin version to plugin repo
       uses: ad-m/github-push-action@master
       with:
