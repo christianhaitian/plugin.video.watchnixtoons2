@@ -54,7 +54,7 @@ jobs:
       id: build
       shell: bash {0}
       env:
-        notes: ("${{ github.event.inputs.change_note1 }}" "${{ github.event.inputs.change_note2 }}" "${{ github.event.inputs.change_note3 }}" "${{ github.event.inputs.change_note4 }}" "${{ github.event.inputs.change_note5 }}")
+        notes: (${{ github.event.inputs.change_note1 }} ${{ github.event.inputs.change_note2 }} ${{ github.event.inputs.change_note3 }} ${{ github.event.inputs.change_note4 }} ${{ github.event.inputs.change_note5 }})
       run: |
         cur_version=$(grep 'WatchNixtoons2" version' addon.xml | cut -f4 -d " " | cut -c 10- | cut -c -4)
         new_version=$(echo $cur_version | awk '{print $1+0.01}')
@@ -66,7 +66,8 @@ jobs:
         sed -i "/toons2\" version\=\"/c\<addon id\=\"plugin.video.watchnixtoons2${branch}\" name\=\"WatchNixtoons2\" version\=\"${new_version}\" provider-name\=\"doko\/Christian-Haitian\">" addon.xml 
         mkdir plugin.video.watchnixtoons2${branch}
         sed -i "/Cartoons \&amp\; Anime/s//Cartoons \&amp\; Anime\n\n[B]${new_version}[\/B]/" addon.xml
-        for note in "${notes[@]}"
+        notes_again=( ${{ github.event.inputs.change_note1 }} ${{ github.event.inputs.change_note2 }} ${{ github.event.inputs.change_note3 }} ${{ github.event.inputs.change_note4 }} ${{ github.event.inputs.change_note5 }} )
+        for note in "${notes_again[@]}"
         do
           sed -i "/\[B\]$new_version\[\/B\]/s//\[B\]$new_version\[\/B\]\n- $note/" addon.xml
         done
