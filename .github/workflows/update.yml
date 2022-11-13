@@ -95,7 +95,6 @@ jobs:
     - name: checkout_chrepo
       uses: actions/checkout@v3
       with:
-        token: ${{ secrets.CHREPO_TOKEN || github.token }}
         repository: christianhaitian/ch.repo
         ref: gh-actions-test
         fetch-depth: 1
@@ -117,7 +116,8 @@ jobs:
         cd ..
         git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
-        git add plugin.video.watchnixtoons2${branch}/plugin.video.watchnixtoons2${branch}-${new_version}.zip addons.xml
+        git add plugin.video.watchnixtoons2${branch}/plugin.video.watchnixtoons2${branch}-${new_version}.zip
+        git add addons.xml
         git commit -m "Add plugin.video.watchnixtoons2${branch}-${new_version}.zip to repo"
         git push
       env:
