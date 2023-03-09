@@ -4,6 +4,7 @@ import sys, ssl
 from requests import Session, get, post, head, exceptions
 import six
 import os #added by Christian Haitian
+from cloudscraper import *
 
 try:  #added by Christian Haitian
   import cPickle as pickle  #added by Christian Haitian
@@ -69,7 +70,7 @@ ADDON = xbmcaddon.Addon()
 if (not (ADDON.getSetting('watchnixtoons2.name') and not ADDON.getSetting('watchnixtoons2.name').isspace())):
     BASEURL = 'https://www.wcofun.com'
 else:
-    BASEURL = 'https://user.wco.tv'
+    BASEURL = 'https://www.wcopremium.tv'
 #Mod by Christian Haitian ends here
 
 # Due to a recent bug on the server end, the mobile URL is now only used on 'makeLatestCatalog()'.
@@ -89,14 +90,14 @@ PROPERTY_URL_CACHE_QUOTE = 'wnt2.URLCacheQuote'
 
 #Mod by Christian Haitian starts here
 #Define addon plugin directory
-if BASEURL == 'https://user.wco.tv':
+if BASEURL == 'https://www.wcopremium.tv':
     Data_Dir = os.path.join(xbmcaddon.Addon().getAddonInfo('path'))
     login = ADDON.getSetting('watchnixtoons2.name')
     password = ADDON.getSetting('watchnixtoons2.password')
 # Assuming two cookies are used for persistent login.
 # (Find it by tracing the login process)
-    persistentCookieNames = ['wordpress_sec_231de03aca492828e4d084c4d94c5935', 'wordpress_logged_in_231de03aca492828e4d084c4d94c5935']
-    URL = 'https://user.wco.tv'
+    persistentCookieNames = ['wordpress_sec_52ae307e0b9e736a7dbf74030de2e01a', 'wordpress_logged_in_52ae307e0b9e736a7dbf74030de2e01a']
+    URL = 'https://www.wcopremium.tv'
     urlData = urlparse(URL)
 #Downloaded wco cookie will be stored addon plugin directory
     cookieFile = Data_Dir + osSeparator + urlData.netloc + '.cookie'
@@ -114,13 +115,24 @@ if BASEURL == 'https://user.wco.tv':
                 session.cookies.update(pickle.load(f))
         except Exception:
         # If could not load cookies from file, get the new ones by login in
+            scraper = CloudScraper.create_scraper()
+            tokens = scraper.get(URL).cookies.get_dict()
             post = session.post(
                 signinUrl,
                 data={
                     'log': login,
                     'pwd': password,
-                    }
+                    },
+				headers=tokens
             )
+            #).text
+            #post = session.post(
+            #    signinUrl,
+            #    data={
+            #        'log': login,
+            #        'pwd': password,
+            #        }
+            #)
             try:
                 with open(cookieFile, 'wb') as f:
                     jar = requests.cookies.RequestsCookieJar()
@@ -182,7 +194,7 @@ def actionMenu(params):
         item_set_info( item, {'title': title, 'plot': title} )
         return (buildURL(data), item, True)
 
-    if BASEURL == 'https://user.wco.tv':
+    if BASEURL == 'https://www.wcopremium.tv':
        xbmcplugin.addDirectoryItems(
            PLUGIN_ID,
            (
@@ -444,11 +456,11 @@ def actionEpisodesMenu(params):
         URLCacheQuote = {}
         # New domain safety replace, in case the user is coming in from an old Kodi favorite item.
         if BASEURL == 'https://www.wcofun.com':
-           url = params['url'].replace('user.wco.tv', 'www.wcofun.com', 1)
+           url = params['url'].replace('www.wcopremium.tv', 'www.wcofun.com', 1)
            r = requestHelper(url if url.startswith('http') else BASEURL + url)
            html = r.text
         else:
-           url = params['url'].replace('www.wcofun.com', 'user.wco.tv', 1)
+           url = params['url'].replace('www.wcofun.com', 'www.wcopremium.tv', 1)
            r = requestHelper(url if url.startswith('http') else BASEURL + url)
            html = r.text
 
@@ -509,17 +521,17 @@ def actionEpisodesMenu(params):
 def actionLatestMoviesMenu(params):
     # Returns a list of links from a hidden "/anime/movies" area.
     # Since this page is very large (130 KB), we memory cache it after it's been requested.
-    html = getRawWindowProperty(PROPERTY_LATEST_MOVIES)
-    if not html:
-        r = requestHelper(BASEURL + params['path'])
-        html = r.text
-        setRawWindowProperty(PROPERTY_LATEST_MOVIES, html)
-
+    #html = getRawWindowProperty(PROPERTY_LATEST_MOVIES)
+    #html = ''
+    #if not html:
+    r = requestHelper(BASEURL + params['path'])
+    html = r.text
+    setRawWindowProperty(PROPERTY_LATEST_MOVIES, html)
     # Similar scraping logic to 'actionEpisodesMenu()'.
 
     dataStartIndex = html.find('"sidebar_right3"')
     if dataStartIndex == -1:
-        raise Exception('Latest movies scrape fail: ' + url)
+        raise Exception('Latest movies scrape fail: ' + html)
 
     # Persistent property with item metadata.
     infoItems = getWindowProperty(PROPERTY_INFO_ITEMS) or { }
@@ -557,19 +569,19 @@ def actionLatestMoviesMenu(params):
             if ADDON_VIDEO_FANART:
                 artDict['fanart'] = entryURL.replace( BASEURL, IMAGES_URL + '/thumbs' ) + '.jpg'
 
-                yield (
-                    buildURL({'action': 'actionResolve', 'url': entryURL}),
-                    makeListItem(
-                        unescapeHTMLText(entryTitle),
-                        entryURL,
-                        artDict,
-                        entryPlot,
-                        isFolder = False,
-                        isSpecial = True,
-                        oldParams = entryParams
-                    ),
-                    False
-                )
+            yield (
+                buildURL({'action': 'actionResolve', 'url': entryURL}),
+                makeListItem(
+                    unescapeHTMLText(entryTitle),
+                    entryURL,
+                    artDict,
+                    entryPlot,
+                    isFolder = False,
+                    isSpecial = True,
+                    oldParams = entryParams
+                ),
+                False
+            )
     xbmcplugin.addDirectoryItems(PLUGIN_ID, tuple(_movieItemsGen()))
     xbmcplugin.endOfDirectory(PLUGIN_ID)
     setViewMode()
@@ -1404,12 +1416,12 @@ def getCatalogProperty(params):
 
 def actionResolve(params):
 #Mod by Christian Haitian starts here
-   if BASEURL == 'https://user.wco.tv':
+   if BASEURL == 'https://www.wcopremium.tv':
     # Needs to be the BASEURL domain to get multiple video qualities.
     url = params['url']
     # Sanitize the URL since on some occasions it's a path instead of full address.
     url = url if url.startswith('http') else (BASEURL + (url if url.startswith('/') else '/' + url))
-    r = requestHelper(url.replace('wcofun.net', 'user.wco.tv', 1)) # New domain safety.
+    r = requestHelper(url.replace('wcofun.net', 'www.wcopremium.tv', 1)) # New domain safety.
     content = r.content
 
     if six.PY3:
@@ -1503,7 +1515,7 @@ def actionResolve(params):
 
     else: #Check free site in case of a new release that's not on the premium site yet.
      xbmcgui.Dialog().notification('Trying free stream', '')
-     r = requestHelper(url.replace('user.wco.tv', 'www.wcofun.com', 1)) # Change from premium site to free site
+     r = requestHelper(url.replace('www.wcopremium.tv', 'www.wcofun.com', 1)) # Change from premium site to free site
      content = r.content
 
      def _decodeSource(subContent):
@@ -1784,7 +1796,7 @@ def actionResolve(params):
         xbmcplugin.setResolvedUrl(PLUGIN_ID, True, item)
     elif '/inc/embed' in content: #Premium link failed so we'll try the free version now.
      xbmcgui.Dialog().notification('Trying free stream', '')
-     r = requestHelper(url.replace('user.wco.tv', 'www.wcofun.com', 1)) # Change from premium site to free site
+     r = requestHelper(url.replace('www.wcopremium.tv', 'www.wcofun.com', 1)) # Change from premium site to free site
      content = r.content
 
      def _decodeSource(subContent):
@@ -2017,7 +2029,7 @@ def actionResolve(params):
             for char in chars.replace('"', '').split(',')
         )
         try:
-            if BASEURL == 'https://user.wco.tv':
+            if BASEURL == 'https://www.wcopremium.tv':
                 return BASEURL + search(r'src="([^"]+)', iframe).group(1)
             else:
                 returnUrl = search(r'src="([^"]+)', iframe).group(1)
@@ -2301,12 +2313,12 @@ def requestHelper(url, data=None, extraHeaders=None):
 
 #Mod by Christian Haitian starts here
     while status != 200 and i < 2:
-        if data and BASEURL == 'https://user.wco.tv':
+        if data and BASEURL == 'https://www.wcopremium.tv':
             response = session.post(url, data=data, headers=myHeaders, verify=False, timeout=10)
         elif data and BASEURL == 'https://www.wcofun.com':
             response = s.post(url, data=data, headers=myHeaders, verify=False, cookies=cookieDict, timeout=10)
         else:
-             if BASEURL == 'https://user.wco.tv' and 'last-50-recent-release' not in url: 
+             if BASEURL == 'https://www.wcopremium.tv' and 'last-50-recent-release' not in url: 
                  response = session.get(url, headers=myHeaders, verify=False, timeout=10)
              else:
                  response = s.get(url, headers=myHeaders, verify=False, cookies=cookieDict, timeout=10)
@@ -2314,7 +2326,7 @@ def requestHelper(url, data=None, extraHeaders=None):
         if status != 200:
 
             if status == 403 and 'cloudflare' == response.headers.get('server', ''):
-                s.mount(BASEURL, tls_adapters[i])
+                s.mount(url, tls_adapters[i])
             i += 1
 
 #Mod by Christian Haitian ends here
