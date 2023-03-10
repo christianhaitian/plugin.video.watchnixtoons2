@@ -4,7 +4,7 @@ import sys, ssl
 from requests import Session, get, post, head, exceptions
 import six
 import os #added by Christian Haitian
-from cloudscraper import *
+from cloudscraper import * #added by Christian Haitian
 
 try:  #added by Christian Haitian
   import cPickle as pickle  #added by Christian Haitian
@@ -161,7 +161,7 @@ ADDON_ICON = ADDON.getAddonInfo('icon')
 ADDON_FANART = os.path.join(xbmcaddon.Addon().getAddonInfo('path')) + osSeparator + 'fanart.jpg'
 ADDON_ICON_DICT = {'icon': ADDON_ICON, 'thumb': ADDON_ICON, 'poster': ADDON_ICON, 'fanart': ADDON_FANART}
 RESOURCE_URL = 'special://home/addons/{0}resources/'.format(PLUGIN_NAME)
-ADDON_TRAKT_ICON = 'special://home/addons/plugin.video.watchnixtoons2/resources/traktIcon.png'
+ADDON_TRAKT_ICON = 'special://home/addons/plugin.video.watchnixtoons2.kodi19/resources/traktIcon.png'
 # Uses URL to get fan art for videos
 ADDON_VIDEO_FANART = ADDON.getSetting('showVideoFanart') == 'true'
 
@@ -242,7 +242,7 @@ def actionCatalogMenu(params):
                 # these images don't have to be distributed w/ the add-on, if they're not needed).
                 # After they're downloaded, the images exist in Kodi's image cache folders.
                 THUMBS_BASEURL = 'https://doko-desuka.github.io/128h/'
-                artDict = {'thumb': None, 'fanart': ADDON_FANART}
+                artDict = {'thumb': None}
                 miscItem = None
                 for sectionName in sorted(catalog.keys()):
                     if catalog[sectionName]:
@@ -310,7 +310,7 @@ def actionCatalogSection(params):
     # Items in these catalogs link to the video player pages already.
     isSpecial = (
         path in {URL_PATHS['ova'], URL_PATHS['movies'], URL_PATHS['latest']}
-        or params.get('searchType', 'series') != 'series' # not series = movies or episodes search
+        or params.get('searchType', 'series') not in {'series', 'genres'} # not series = movies or episodes search
     )
 
     if isSpecial:
@@ -324,7 +324,7 @@ def actionCatalogSection(params):
     if path != URL_PATHS['latest'] or not ADDON_LATEST_THUMBS:
         artDict = {'icon': thumb, 'thumb': thumb, 'poster': thumb} if thumb else None
     else:
-        artDict = {'icon': thumb, 'thumb': 'DefaultVideo.png', 'poster': 'DefaultVideo.png', 'fanart': thumb} if thumb else None
+        artDict = {'icon': thumb, 'thumb': 'DefaultVideo.png', 'poster': 'DefaultVideo.png'} if thumb else None
 
     # Persistent property with item metadata, used with the "Show Information" context menu.
     infoItems = getWindowProperty(PROPERTY_INFO_ITEMS) or { }
@@ -401,9 +401,9 @@ def actionCatalogSection(params):
 
             # If there's metadata for this entry (requested by the user with "Show Information"), use it.
             if entryURL in infoItems:
-                    entryParams = None
-                    itemPlot, itemThumb = infoItems[entryURL]
-                    entryArt = {'icon': ADDON_ICON, 'thumb': itemThumb, 'poster': itemThumb}
+                entryParams = None
+                itemPlot, itemThumb = infoItems[entryURL]
+                entryArt = {'icon': ADDON_ICON, 'thumb': itemThumb, 'poster': itemThumb}
             else:
 
                 # do this here so we only need to create a hash once per entry
@@ -423,15 +423,15 @@ def actionCatalogSection(params):
                 itemPlot = ''
                 entryParams = params
 
-                # add fanart if option is selected
-                if show_fanart:
-                    entryArt['fanart'] = IMAGES_URL + '/thumbs' + entryURL + '.jpg'
+            # add fanart if option is selected
+            if show_fanart:
+                entryArt['fanart'] = IMAGES_URL + '/thumbs' + entryURL + '.jpg'
 
-                yield (
-                    buildURL({'action': action, 'url': entryURL}),
-                    listItemFunc(entry[1], entryURL, entryArt, itemPlot, isFolder, isSpecial, entryParams),
-                    isFolder
-                )
+            yield (
+                buildURL({'action': action, 'url': entryURL}),
+                listItemFunc(entry[1], entryURL, entryArt, itemPlot, isFolder, isSpecial, entryParams),
+                isFolder
+            )
 
     xbmcplugin.addDirectoryItems(PLUGIN_ID, tuple(_sectionItemsGen()))
     xbmcplugin.endOfDirectory(PLUGIN_ID)
@@ -490,7 +490,7 @@ def actionEpisodesMenu(params):
 
         showURL = params['url']
         thumb = listData[0]
-        artDict = {'icon': thumb, 'thumb': thumb, 'poster': thumb, 'fanart': thumb} if thumb else None
+        artDict = {'icon': thumb, 'thumb': thumb, 'poster': thumb} if thumb else None
         plot = listData[1]
 
         listItemFunc = makeListItemClean if ADDON.getSetting('cleanupEpisodes') == 'true' else makeListItem
@@ -733,7 +733,7 @@ def actionGenresMenu(params):
                 buildURL(
                     {
                         'action': 'actionCatalogMenu',
-                        'path': '/search-by-genre/' + match.group(1).rsplit('/', 1)[1],
+                        'path': '/search-by-genre/page/' + match.group(1).rsplit('/', 1)[1],
                         'searchType': 'genres'
                     }
                 ),
@@ -1168,6 +1168,15 @@ def makeListItemClean(title, url, artDict, plot, isFolder, isSpecial, oldParams,
             item_set_info( item, {'mediatype': 'video', 'title': unescapedTitle} )
     else:
         title, season, episode, multiPart, episodeTitle = getTitleInfo(unescapedTitle)
+        # dirty way to ensure is a string
+        # this is due to filters being used, todo for clean-up
+        if six.PY3:
+            if episode:
+                episode = "".join(episode)
+            if season:
+                season = "".join(season)
+            if multiPart:
+                multiPart = "".join(multiPart)
         if episode and episode.isdigit():
             # The clean episode label will have this format: "SxEE Episode Name", with S and EE standing for digits.
             item = xbmcgui.ListItem(
@@ -2067,6 +2076,10 @@ def actionResolve(params):
         else:
             return # User cancelled the chapter selection.
     else:
+        # back-up search index
+        if embedURLIndex <= 0:
+            embedURLPattern = r'class="episode-descp"'
+            embedURLIndex = content.find(embedURLPattern)
         # Normal / single-chapter episode.
         embedURL = _decodeSource(content[embedURLIndex:])
         # User asked to play multiple chapters, but only one chapter/video player found.
@@ -2175,12 +2188,14 @@ def actionResolve(params):
             # This is an attempt to fix the fact that, on newer Kodi versions, the debug log says that there
             # was an SSL failure, with this line in the log (with debug logging activated):
             # "ERROR: CCurlFile::Stat - Failed: SSL peer certificate or SSH remote key was not OK(60)"
-            mediaHead.url = mediaHead.url.replace('https://', 'http://', 1)
+            streamURL = mediaHead.url.replace('https://', 'http://', 1)
+        else:
+            streamURL = mediaHead.url
 
         # Need to use the exact same ListItem name & infolabels when playing or else Kodi replaces that item
         # in the UI listing.
         item = xbmcgui.ListItem(xbmc.getInfoLabel('ListItem.Label'))
-        item.setPath(mediaHead.url + '|' + '&'.join(key+'='+urllib_parse.quote_plus(val) for key, val in MEDIA_HEADERS.items()))
+        item.setPath(streamURL + '|' + '&'.join(key+'='+urllib_parse.quote_plus(val) for key, val in MEDIA_HEADERS.items()))
         item.setMimeType(mediaHead.headers.get('Content-Type', 'video/mp4')) # Avoids Kodi's MIME request.
 
         # When coming in from a Favourite item, there will be no metadata. Try to get at least a title.
@@ -2202,7 +2217,7 @@ def actionResolve(params):
             item_set_info( item,
                 {
                     'tvshowtitle': xbmc.getInfoLabel('ListItem.TVShowTitle'),
-                    'title': itemTitle,
+                    'title': unescapeHTMLText(itemTitle),
                     'season': int(seasonInfoLabel) if seasonInfoLabel.isdigit() else -1,
                     'episode': int(episodeString),
                     'plot': xbmc.getInfoLabel('ListItem.Plot'),
@@ -2212,7 +2227,7 @@ def actionResolve(params):
         else:
             item_set_info( item,
                 {
-                    'title': itemTitle,
+                    'title': unescapeHTMLText(itemTitle),
                     'plot': xbmc.getInfoLabel('ListItem.Plot'),
                     'mediatype': 'movie'
                 }
@@ -2265,15 +2280,16 @@ def getOldDomains():
         'm.watchcartoononline.io',
         'www.thewatchcartoononline.tv',
         'www.wcofun.net'
+        'www.wcofun.com'
     )
 
 
 def solveMediaRedirect(url, headers):
     # Use HEAD requests to fulfill possible 302 redirections.
     # Returns the final stream HEAD response.
-    while 1:
+    while True:
         try:
-            mediaHead = get(
+            mediaHead = s.get(
                 url, stream=True, headers=headers, allow_redirects=False, verify=False, timeout=10
             )
             if 'Location' in mediaHead.headers:
