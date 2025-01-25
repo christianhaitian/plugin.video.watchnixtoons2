@@ -101,3 +101,22 @@ def generateMd5(strToMd5):
 
     md5Instance.update(strToMd5)
     return md5Instance.hexdigest()
+
+def quality_label( quality ):
+
+    """ Retrieves label based upon quality """
+
+    if quality >= 1080:
+        return '1080 (FHD)'
+    if quality >= 720:
+        return '720 (HD)'
+    return '480 (SD)'
+
+def xbmc_debug(*args):
+
+    """ used for debugging """
+
+    xbmc.log(
+        'WatchNixtoons2 > '+' '.join((val if isinstance(val, str) else repr(val)) for val in args),
+        xbmc.LOGWARNING
+    )
