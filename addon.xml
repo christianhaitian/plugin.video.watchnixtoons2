@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.watchnixtoons2.kodi19" name="WatchNixtoons2" version="2.15" provider-name="doko/Christian-Haitian">
+<addon id="plugin.video.watchnixtoons2.kodi19" name="WatchNixtoons2" version="2.16" provider-name="doko/Christian-Haitian">
     <requires>
         <import addon="xbmc.python" version="3.0.0"/>
         <import addon="script.module.requests"/>
@@ -11,6 +11,11 @@
     <extension point="xbmc.addon.metadata">
         <news>
 [COLOR orange][B]WatchNixtoons2[/B][/COLOR] - Cartoons &amp; Anime
+
+[B]2.16[/B]
+- Added workaround new video method thanks to lolage331
+- Updated user agent thanks to lolage331
+- Fixed latest releases
 
 [B]2.15[/B]
 - Add functionality for m3u8 videos thanks to lolage331
