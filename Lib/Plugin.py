@@ -79,7 +79,7 @@ WORKAROUND_BASEURL = 'https://www.wcostream.tv'
 
 # Due to a recent bug on the server end, the mobile URL is now only used on 'makeLatestCatalog()'.
 # BASEURL_MOBILE = 'https://m.wcostream.com' # Mobile version of one of their domains (seems to be the only one).
-BASEURL_ALT = 'https://www.wcofun.com'
+BASEURL_ALT = 'https://www.wcofun.net'
 IMAGES_URL = 'https://cdn.animationexplore.com'
 
 PROPERTY_CATALOG_PATH = 'wnt2.catalogPath'
@@ -162,7 +162,7 @@ ADDON_TRAKT_ICON = 'special://home/addons/plugin.video.watchnixtoons2.kodi19/res
 ADDON_VIDEO_FANART = ADDON.getSetting('showVideoFanart') == 'true'
 
 # To let the source website know it's this plugin. Also used inside "makeLatestCatalog()" and "actionResolve()".
-WNT2_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36'
+WNT2_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36'
 
 MEDIA_HEADERS = None # Initialized in 'actionResolve()'.
 
@@ -2108,7 +2108,7 @@ def actionResolve(params):
 
     # On rare cases an episode might have several "chapters", which are video players on the page.
 
-    if 'playChapters' in params or ADDON.getSetting('chapterEpisodes') == 'true':
+    elif 'playChapters' in params or ADDON.getSetting('chapterEpisodes') == 'true':
         # try and get chapters from site class
         dataIndices = compile( SITE_SETTINGS[ 'chapter' ][ 'regex' ], MULTILINE ).findall(content.decode('utf-8'))
 
@@ -2131,6 +2131,10 @@ def actionResolve(params):
     elif 'uploads0" src=' in content:
 
         urls['embed'] = re.search(r'<iframe id=\"(?:[a-zA-Z]+)uploads(?:[0-9]+)\" src=\"([^\"]+)\"', content, re.DOTALL).group(1)
+
+    elif 'cizgi-js-0" src=' in content:
+
+        urls['embed'] = re.search(r'<iframe\s*rel=\"nofollow\"\s*id=\"cizgi\-js\-(?:[0-9]+)\" src=\"([^\"]+)\"', content, re.DOTALL).group(1)
 
     else:
         embedURLPattern = r'onclick="myFunction'
@@ -2155,7 +2159,8 @@ def actionResolve(params):
          r2 = requestHelper(unescapeHTMLText(urls['embed']), # Sometimes a '&#038;' symbol is present in this URL.
                  data = None,
                  extraHeaders = {
-                     'User-Agent': WNT2_USER_AGENT, 'Accept': '*/*', 'Referer': urls['embed'], 'X-Requested-With': 'XMLHttpRequest',
+                     'Referer': urls['embed'],
+
                  }
          )
          html = r2.text
@@ -2463,8 +2468,6 @@ def requestHelper(url, data=None, extraHeaders=None):
         'Verifypeer': 'false',
         'Accept-Language': 'en-US,en;q=0.5',
         'Cache-Control': 'no-cache',
-        'Pragma': 'no-cache',
-        'DNT': '1'
     }
     if extraHeaders:
         myHeaders.update(extraHeaders)
@@ -2475,6 +2478,9 @@ def requestHelper(url, data=None, extraHeaders=None):
         cookieDict = dict(pair.split('=') for pair in cookieProperty.split('; '))
     else:
         cookieDict = None
+
+    uri = urllib_parse.urlparse(url)
+    domain = uri.scheme + '://' + uri.netloc
 
     startTime = time()
 
@@ -2497,7 +2503,7 @@ def requestHelper(url, data=None, extraHeaders=None):
         if status != 200:
 
             if status == 403 and 'cloudflare' == response.headers.get('server', ''):
-                s.mount(url, tls_adapters[i])
+                s.mount(domain, tls_adapters[i])
             i += 1
 
 #Mod by Christian Haitian ends here
