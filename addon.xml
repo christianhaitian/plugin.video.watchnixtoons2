@@ -1,288 +1,49 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.watchnixtoons2.kodi19" name="WatchNixtoons2" version="2.17" provider-name="doko/Christian-Haitian">
+<addon id="plugin.video.watchnixtoons2.kodi19" name="WatchNixtoons2" version="0.14.2" provider-name="WNT2">
     <requires>
-        <import addon="xbmc.python" version="3.0.0"/>
         <import addon="script.module.requests"/>
-		<import addon="script.module.six"/>
-		<import addon="script.module.inputstreamhelper"/>
+        <import addon="script.module.six"/>
+        <import addon="inputstream.adaptive"/>
     </requires>
-    <extension point="xbmc.python.pluginsource" library="Default.py">
+    <extension point="xbmc.python.pluginsource" library="default.py">
         <provides>video</provides>
     </extension>
     <extension point="xbmc.addon.metadata">
-        <news>
-[COLOR orange][B]WatchNixtoons2[/B][/COLOR] - Cartoons &amp; Anime
-
-[B]2.17[/B]
-- Update Thumbnail Hashest thanks to lolage331
-- Improved handling of inputstream thanks to lolage331
-
-[B]2.16[/B]
-- Added workaround new video method thanks to lolage331
-- Updated user agent thanks to lolage331
-- Fixed latest releases
-
-[B]2.15[/B]
-- Add functionality for m3u8 videos thanks to lolage331
-- Updated User Agent thanks to lolage331
-- Updated Thumbnail Hashes thanks to lolage331
-
-[B]2.14[/B]
-- Update Thumbnail Hashes thanks to lolage331
-- Update User-agent thanks to lolage331
-
-[B]2.13[/B]
-- Update Thumbnail Hashes thanks to lolage331
-
-[B]2.12[/B]
-- Update Thumbnail Hashes thanks to lolage331
-- Update hashes thanks to lolage331
-
-[B]2.11[/B]
-- Add support for 1080P thanks to lolage331
-- Update thumbnail hashes thanks to lolage331
-- Update user agent thanks to lolage331
-
-[B]2.1[/B]
-- Update domain to wcofun.net
-- Update thumbnail hashes thanks to lolage331
-- Update chapter retrieval technique thanks to lolage331
-
-[B]2.09[/B]
-- Update Thumbnail Hashes thanks to lolage331
-- Update User-agent thanks to lolage331
-
-[B]2.08[/B]
-- Add premium workaround thanks to lolage331
-- Update hashes thanks to lolage331
-
-[B]2.07[/B]
-- Update domain to wcofun.tv
-- Update User-agent thanks to lolage331
-- Update Thumbnail Hashes thanks to lolage331
-- Added premium content warning notice if selected video is premium only thanks to lolage331
-
-[B]2.06[/B]
-- Fixed source decoding thanks to lolage331
-
-[B]2.05[/B]
-- Fixed dubbed listing thanks to lolage331
-- Update thumbnail hashes thanks to lolage331
-
-[B]2.04[/B]
-- Fixed dubbed listing thanks to lolage331
-- Update hashes thanks to lolage331
-
-[B]2.03[/B]
-- Updated Thumbnail Hashes
-- Updated domain to wcofun.org
-- Updated user agent
-- Fixed no subs and no dubs showing up
-- Thanks to lolage331 for these updates
-
-[B]2.02[/B]
-- Update Thumbnail Hashes thanks to lolage331
-
-[B]2.01[/B]
-- Add missing cloudscraper addon folder
-
-[B]2.0[/B]
-- Updated cloudflare detection for premium login 
-- Fixed nixtoons information scraping
-
-[B]1.91[/B]
-- Revert force mount session on each request - thanks to lolage331
-- Limit Latest Movies option to premium since it does not work on free anymore
-
-[B]1.9[/B]
-- Mount session changes thanks to lolage331
-- Updated free domain address to www.wcofun.com
-
-[B]1.89[/B]
-- Fixed listitem deprecated warnings - Thanks to lolage331
-- Latest Movies Now show thumbnails if available - Thanks to lolage331
-- Update user agent - Thanks to lolage331
-- Update Thumbnail Hashes - Thanks to lolage331
-- Fixed auto selection of HD videos still showed SD videos
-
-[B]1.88[/B]
-- Movies and OVAs now show thumbnails if available thanks to lolage331
-- Latest movies now show fanart if option is enabled thanks to lolage331
-- Update Thumbnail Hashes thanks to lolage331
-
-[B]1.87[/B]
-- Add debug http support thanks to lolage331
-
-[B]1.86[/B]
-- Add option to show fanart for episodes, movies and OVAs thanks to lolage331
-- Update hashes thanks to lolage331
-
-[B]1.85[/B]
-- Update Thumbnail hashes thanks to lolage331
-
-[B]1.84[/B]
-- Fix plugin location in settings
-
-[B]1.83[/B]
-- Update Thumbnail Hashes thanks to lolage331
-- Update User-agent thanks to lolage331
-- Escape HTML characters in episode title [B]1.83[/B]
-- Update Thumbnail Hashes thanks to lolage331
-- Update User-agent thanks to lolage331 plot thanks to lolage331
-
-[B]1.82[/B]
-- Fixed list index out of range for latest releases for premium streaming
-- Added ability to show thumbnails for cartoons, subbed, dubbed, and ongoing and popular sections (Thanks to lolage331)
-
-[B]1.81[/B]
-- Fix free streaming thanks to lolage331
-
-[B]1.8[/B]
-- Minor code cleanup
-
-[B]1.79[/B]
-- github actions testing.  No updates but a false version bump.
-
-[B]1.78[/B]
-- Update cloudflare detection thanks to lolage331
-
-[B]1.77[/B]
-- Update useragent and pattern path
-
-[B]1.76[/B]
-- Update to resolve potential index out range on some devices using Kodi
-
-[B]1.75[/B]
-- Updated User Agent and Thumbnail fixes thanks to 0.6.7 update from https://r.nf/r/Addons4Kodi/comments/sqxj50/release_watchnixtoons2_060/
-
-[B]1.74[/B]
-- Change free domain from wcofun.com wcofun.net
-
-[B]1.73[/B]
-- Update to fix potential index out of range issue
-
-[B]1.72[/B]
-- Update to fix Cloudflare TLS issue thanks to 0.6.3 update from https://r.nf/r/Addons4Kodi/comments/sqxj50/release_watchnixtoons2_060/
-
-[B]1.71[/B]
-- Fixed lastest episode show thumbnail switch in settings
-
-[B]1.7[/B]
-- Fixed thumbnail scrapes
-- Speed up episode list creation thanks to lpuglia
-
-[B]1.6[/B]
-- Fixed premium streaming support by adding TLS 1.1 and TLS 1.2
-
-[B]1.4[/B]
-- Update free domain from thewatchcartoononline.tv to wcofun.com
-- Fix ability to play free sources
-
-[B]1.3[/B]
-- Fixed some more Python 3 related compatibility issues
-
-[B]1.2[/B]
-- Fixed some Python 3 related compatibility issues
-
-[B]1.1[/B]
-- Some minor peformance optimizations
-- Fixed episode title characters
-
-[B]1.0[/B]
-- Kodi v19 support (Thanks to rekony's source for guidance on this)
-- Also fixed mixup between SD and HD selections
-
-[B]0.4.9.8[/B]
-- Fix ability to be able to resolve premium streaming links for low quality by adding headers during link testing.
-
-[B]0.4.9.7[/B]
-- Fix ability to be able to resolve premium streaming links by adding headers during link testing.
-
-[B]0.4.9.6[/B]
-- Added ability to allow redirects for premium site streaming links.
-
-[B]0.4.9.5[/B]
-- Fix premium site streaming that was broken from 0.4.9.4 update.
-
-[B]0.4.9.4[/B]
-- Added a workaround for situations where a latest release is not available on the premium site but is on the free site.
-- Fixed chapter selection for episodes with multiple chapters on the premium site.
-
-[B]0.4.9.3[/B]
-- Add the ability to automatically load art while searching through content.
-
-[B]0.4.9.2[/B]
-- Fixed issue with getting thumbnails due to site certificate issues.
-            
-[B]0.4.9.1[/B]
-- Converted from pickle to cPickle for reading and writing cookie file for premium.
-- Streamlined the code a little and cleaned up some comments
-
-[B]0.4.8.9[/B]
-- Added error handling in cases where the premium stream link gives a connection error instead of a failed response.
-- Added a 10 second timeout for a premiumlink response so that it doesn't sit and wait for a premiumlink in case of slow response.
-
-[B]0.4.8.8[/B]
-- Added ability to automatically switch to a free stream, if available, if the premium stream is having an issue.
-- Disable the requirement to verify SSL connection to streams in case the located servers are having certificate issues.  Should fix linux clients.
-
-[B]0.4.8.7[/B]
-- Fix for favorites from Watchnixtoons when switching from premium to free user and vice versa so favorites do no have to be recreated each time.
-
-[B]0.4.8.6[/B]
-- Stability enhancements to premium user streaming.  Shouldn't error out as much unless the website has no playable sources.
-
-[B]0.4.8.5[/B]
-- Just some documentation cleanup and optimizations
-
-[B]0.4.8.3[/B]
-- Added the ability to use the addon whether a premium user or a free user.
-
-[B]0.4.8.2[/B]
-- Added cookie age check and delete and recreate if over 24 hours old.
-
-[B]0.4.8.1[/B]
-- Modified addon to scrape from premium site with premium account provided by user.
-            
-[B]0.4.8:[/B]
-- Fixed a typo in the addons.xml file (thanks @SerpentDrago!)
-
-[B]0.4.7:[/B]
-- Autoplay setting reinstated.
-- Added an option to show letter thumbnails on the catalog sections. Only useful if you're on a custom Kodi skin.
-- Added a warning whenever a video is blocked from excess traffic.
-
-[B]0.4.6:[/B]
-- Add-on re-enabled. Their site is back to letting free users watch videos.
-- To avoid overwhelming their servers on these COVID-19 quarantine times, the "autoplay highest quality" add-on setting was removed. So when you play a video, you'll always be asked what quality to use.
-
-[B]0.4.5:[/B]
-- Temporary disabling of the add-on. If the source site ever comes back, we can enable it again.
-
-[B]0.4.4:[/B]
-- Added an "About" button to the Trakt tab of the add-on settings, explaining how to use it.
-
-[B]0.4.3:[/B]
-- Fixed the series and episode search.
-
-        </news>
-        <assets>
-            <icon>icon.png</icon>
-            <fanart>fanart.jpg</fanart>
-            <screenshot>screenshot4.jpg</screenshot>
-            <screenshot>screenshot3.jpg</screenshot>
-            <screenshot>screenshot2.png</screenshot>
-            <screenshot>screenshot1.jpg</screenshot>
-        </assets>
+        <summary lang="en">WatchNixtoons2</summary>
         <description lang="en">
-Watch cartoons and anime from [COLOR orange][B]www.TheWatchCartoonOnline.tv[/B][/COLOR].
+Watch cartoons and anime from [COLOR orange][B]www.wcofun.net[/B][/COLOR].
 
 Support the WatchCartoonOnline website with a PayPal donation to:
 [COLOR khaki][B]wcohelp@yandex.com[/B][/COLOR]
 
-Add-on by doko.  Premium capability added by Christian-Haitian
+Add-on originally by doko.
+Random updates by lolage.
         </description>
-        <platform lang="en">all</platform>
         <disclaimer lang="en">The authors of this addon do not host any of the content found or have any affiliation with the content providers. This add-on only scrapes web pages.</disclaimer>
+        <language>en</language>
+        <platform lang="en">all</platform>
+        <news>[COLOR orange][B]WatchNixtoons2[/B][/COLOR] - Cartoons &amp; Anime
+
+[B]0.14.2:[/B]
+- wcostream - add new movie workaround
+- Update Thumbnail Hashes
+
+[B]0.14.1:[/B]
+- wcoforever - add domain
+- wcofun - fix search
+- wcofun - add thumbnails to series search
+- wcofun - change to wcoflix
+- wcostream - movie workaround is now only limited to movies that are outside movie cat
+- Update Thumbnail Hashes
+- Update User Agent
+
+[B]0.14.0:[/B]
+- Code Tidyup
+- Separate Trakt Integration
+- Add TMDB thumbnails
+- Fix wcostream premium workaround</news>
+        <assets>
+            <icon>icon.png</icon>
+        </assets>
     </extension>
 </addon>

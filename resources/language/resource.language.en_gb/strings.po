@@ -1,0 +1,162 @@
+# Kodi Media Center language file
+# Addon Name: Watchnixtoons2
+# Addon id: plugin.video.watchnixtoons2.kodi19
+
+msgid ""
+msgstr ""
+
+#resources/settings.xml
+msgctxt "#30000"
+msgid "Playback Method"
+msgstr ""
+
+msgctxt "#30001"
+msgid "Catalog"
+msgstr ""
+
+msgctxt "#30002"
+msgid "Show Catalog Sections"
+msgstr ""
+
+msgctxt "#30003"
+msgid "Show Letter Thumbnails"
+msgstr ""
+
+msgctxt "#30004"
+msgid "Order 'Latest Releases' By Date"
+msgstr ""
+
+msgctxt "#30005"
+msgid "Show 'Latest Releases' Thumbnails"
+msgstr ""
+
+msgctxt "#30006"
+msgid "Show 'Ongoing & Popular' Thumbnails"
+msgstr ""
+
+msgctxt "#30007"
+msgid "Show 'Series' Thumbnails"
+msgstr ""
+
+msgctxt "#30008"
+msgid "Reverse Episode List Order"
+msgstr ""
+
+msgctxt "#30009"
+msgid "Clean Episode Titles"
+msgstr ""
+
+msgctxt "#30010"
+msgid "Always Show Multi-chapter Dialog"
+msgstr ""
+
+msgctxt "#30011"
+msgid "Force View Mode"
+msgstr ""
+
+msgctxt "#30012"
+msgid "Enter View ID"
+msgstr ""
+
+msgctxt "#30013"
+msgid "Tools"
+msgstr ""
+
+msgctxt "#30014"
+msgid "Old WNT2 Upgrade Scripts"
+msgstr ""
+
+msgctxt "#30015"
+msgid "Restore episodes 'watched' status"
+msgstr ""
+
+msgctxt "#30016"
+msgid "Update your Kodi Favourites"
+msgstr ""
+
+msgctxt "#30017"
+msgid "Trakt"
+msgstr ""
+
+msgctxt "#30018"
+msgid "Clear Trakt Token"
+msgstr ""
+
+msgctxt "#30019"
+msgid "Enable this when Kodi fails to start playing, on newer versions"
+msgstr ""
+
+msgctxt "#30020"
+msgid "Use HTTP stream instead of HTTPS"
+msgstr ""
+
+msgctxt "#30021"
+msgid "Show Video Fanart"
+msgstr ""
+
+msgctxt "#30022"
+msgid "Domain"
+msgstr ""
+
+#lib\Plugin.py Main menu
+msgctxt "#30050"
+msgid "Latest Releases"
+msgstr ""
+
+msgctxt "#30051"
+msgid "Latest Movies"
+msgstr ""
+
+msgctxt "#30052"
+msgid "Popular & Ongoing Series"
+msgstr ""
+
+msgctxt "#30053"
+msgid "Dubbed Anime"
+msgstr ""
+
+msgctxt "#30054"
+msgid "Cartoons"
+msgstr ""
+
+msgctxt "#30055"
+msgid "Subbed Anime"
+msgstr ""
+
+msgctxt "#30056"
+msgid "OVA Series"
+msgstr ""
+
+msgctxt "#30057"
+msgid "Recently Watched"
+msgstr ""
+
+#lib\Plugin.py Search menu
+msgctxt "#30100"
+msgid "Search Cartoon/Anime Name"
+msgstr ""
+
+msgctxt "#30101"
+msgid "Search Movie Name"
+msgstr ""
+
+msgctxt "#30102"
+msgid "Search Episode Name"
+msgstr ""
+
+msgctxt "#30103"
+msgid "Search by Genre"
+msgstr ""
+
+
+msgctxt "#30104"
+msgid "Search by Trakt List"
+msgstr ""
+
+
+msgctxt "#30105"
+msgid "Search History..."
+msgstr ""
+
+
+

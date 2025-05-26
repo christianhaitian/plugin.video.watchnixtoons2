@@ -1,47 +1,40 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
-    <category label="Interface">
-		<setting type="lsep" label="Login"/>
-		<setting id="sep"/>
-		<setting id="watchnixtoons2.name" label="Username" type="text" default=""/>
-		<setting id="watchnixtoons2.password" label="Password" type="text" option="hidden" default=""/>
-		<setting type="lsep" label="Playback:"/>
-        <setting id="playbackMethod" label="Playback Method" type="enum" default="0" values="Select Quality Via Dialog|Auto Play Highest Quality|Auto Play Lowest Quality"/>
+    <category label="14206">
+        <setting type="lsep" label="14086"/>
+        <setting id="playbackMethod" label="30000" type="enum" default="0" values="Select Quality Via Dialog|Auto Play Highest Quality|Auto Play Lowest Quality"/>
         <setting type="sep"/>
-        <setting type="lsep" label="Catalog:"/>
-        <setting id="showCatalog" label="Show Catalog Sections" type="bool" default="true"/>
-        <setting id="showCatalogThumbs" label="Show Letter Thumbnails" subsetting="true" type="bool" default="false" enable="eq(-1,true)"/>
-        <setting id="useLatestDate" label="Order &#39;Latest Releases&#39; By Date" type="bool" default="false"/>
-        <setting id="showLatestThumbs" label="Show &#39;Latest Releases&#39; Thumbnails" type="bool" default="false"/>
-        <setting id="showPopularThumbs" label="Show &#39;Ongoing & Popular&#39; Thumbnails" type="bool" default="false"/>
-        <setting id="showSeriesThumbs" label="Show &#39;Series&#39; Thumbnails" type="bool" default="false"/>
-        <setting id="showVideoFanart" label="Show Video Fanart" type="bool" default="false"/>
+        <setting type="lsep" label="30001"/>
+        <setting id="showCatalog" label="30002" type="bool" default="true"/>
+        <setting id="showCatalogThumbs" label="30003" subsetting="true" type="bool" default="false" enable="eq(-1,true)"/>
+        <setting id="useLatestDate" label="30004" type="bool" default="true"/>
+        <setting id="showLatestThumbs" label="30005" type="bool" default="true"/>
+        <setting id="showPopularThumbs" label="30006" type="bool" default="true"/>
+        <setting id="showSeriesThumbs" label="30007" type="bool" default="true"/>
+        <setting id="showVideoFanart" label="30021" type="bool" default="false"/>
         <setting type="sep"/>
-        <setting type="lsep" label="Episodes:"/>
-        <setting id="reverseEpisodes" label="Reverse Episode List Order" type="bool" default="false"/>
-        <setting id="cleanupEpisodes" label="Clean Episode Titles" type="bool" default="false"/>
-        <setting id="chapterEpisodes" label="Always Show Multi-chapter Dialog" type="bool" default="false"/>
+        <setting type="lsep" label="20360"/>
+        <setting id="reverseEpisodes" label="30008" type="bool" default="false"/>
+        <setting id="cleanupEpisodes" label="30009" type="bool" default="false"/>
+        <setting id="chapterEpisodes" label="30010" type="bool" default="false"/>
         <setting type="sep"/>
-        <setting type="lsep" label="View Mode:"/>
-        <setting id="useViewMode" label="Force View Mode" type="bool" default="false"/>
-        <setting id="viewModeID" label="Enter View Id" type="number" subsetting="true" enable="eq(-1,true)" default=""/>
+        <setting type="lsep" label="582"/>
+        <setting id="useViewMode" label="30011" type="bool" default="false"/>
+        <setting id="viewModeID" label="30012" type="number" subsetting="true" enable="eq(-1,true)" default=""/>
     </category>
-    <category label="Tools">
-        <setting type="lsep" label="[B]To restore the 'watched' status of episodes watched on old WNT2 versions:[/B]"/>
-        <setting id="restoreWatched" label="Restore Watched Episodes..." type="action" action="RunPlugin(plugin://plugin.video.watchnixtoons2.kodi19/?action=actionRestoreDatabase)"/>
-        <setting type="sep"/>
-        <setting type="lsep" label="[B]To update your Kodi Favourites that have links to old WNT2 domains:[/B]"/>
-        <setting id="updateFavourites" label="Update Favourites..." type="action" action="RunPlugin(plugin://plugin.video.watchnixtoons2.kodi19/?action=actionUpdateFavourites)"/>
-        <setting type="sep"/>
-        <setting type="lsep" label="[B]Clear existing WatchNixToons2 Cookies[/B]"/>
-        <setting id="updateCookies" label="Clear Cookies..." type="action" action="RunPlugin(plugin://plugin.video.watchnixtoons2.kodi19/?action=actionClearCookies)"/>
+    <category label="30013">
+        <setting type="lsep" label="30014"/>
+        <setting id="restoreWatched" label="30015" type="action" action="RunPlugin(plugin://plugin.video.watchnixtoons2.kodi19/?action=actionRestoreDatabase)"/>
+        <setting id="updateFavourites" label="30016" type="action" action="RunPlugin(plugin://plugin.video.watchnixtoons2.kodi19/?action=actionUpdateFavourites)"/>
     </category>
-    <category label="Trakt">
-        <setting id="trakt.about" label="About..." type="action" action="RunPlugin(plugin://plugin.video.watchnixtoons2.kodi19/?action=actionTraktAbout)"/>
-        <setting id="clearTrakt" label="Clear Trakt Token" type="action" action="RunPlugin(plugin://plugin.video.watchnixtoons2.kodi19/?action=actionClearTrakt)"/>
+    <category label="Integration">
+        <setting type="lsep" label="30017"/>
+        <setting id="traktAbout" label="29943" type="action" action="RunPlugin(plugin://plugin.video.watchnixtoons2.kodi19/?action=actionTraktAbout)"/>
+        <setting id="clearTrakt" label="30018" type="action" action="RunPlugin(plugin://plugin.video.watchnixtoons2.kodi19/?action=actionClearTrakt)"/>
     </category>
-    <category label="Debug">
-        <setting type="lsep" label="Try enabling this when Kodi fails to start playing"/>
-        <setting id="useHTTP" label="Use HTTP stream instead of HTTPS" type="bool" default="false"/>
+    <category label="14260">
+        <setting type="lsep" label="30019"/>
+        <setting id="useHTTP" label="30020" type="bool" default="false"/>
+        <setting id="baseURL" label="30022" type="enum" default="0" values="wcostream.tv|wcoflix.tv|wcoforever.net"/>
     </category>
 </settings>
