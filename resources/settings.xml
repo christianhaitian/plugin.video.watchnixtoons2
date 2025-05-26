@@ -24,13 +24,13 @@
     </category>
     <category label="30013">
         <setting type="lsep" label="30014"/>
-        <setting id="restoreWatched" label="30015" type="action" action="RunPlugin(plugin://plugin.video.watchnixtoons2.kodi19/?action=actionRestoreDatabase)"/>
-        <setting id="updateFavourites" label="30016" type="action" action="RunPlugin(plugin://plugin.video.watchnixtoons2.kodi19/?action=actionUpdateFavourites)"/>
+        <setting id="restoreWatched" label="30015" type="action" action="RunPlugin(plugin://plugin.video.watchnixtoons2/?action=actionRestoreDatabase)"/>
+        <setting id="updateFavourites" label="30016" type="action" action="RunPlugin(plugin://plugin.video.watchnixtoons2/?action=actionUpdateFavourites)"/>
     </category>
     <category label="Integration">
         <setting type="lsep" label="30017"/>
-        <setting id="traktAbout" label="29943" type="action" action="RunPlugin(plugin://plugin.video.watchnixtoons2.kodi19/?action=actionTraktAbout)"/>
-        <setting id="clearTrakt" label="30018" type="action" action="RunPlugin(plugin://plugin.video.watchnixtoons2.kodi19/?action=actionClearTrakt)"/>
+        <setting id="traktAbout" label="29943" type="action" action="RunPlugin(plugin://plugin.video.watchnixtoons2/?action=actionTraktAbout)"/>
+        <setting id="clearTrakt" label="30018" type="action" action="RunPlugin(plugin://plugin.video.watchnixtoons2/?action=actionClearTrakt)"/>
     </category>
     <category label="14260">
         <setting type="lsep" label="30019"/>

@@ -1,6 +1,6 @@
 # Kodi Media Center language file
 # Addon Name: Watchnixtoons2
-# Addon id: plugin.video.watchnixtoons2.kodi19
+# Addon id: plugin.video.watchnixtoons2
 
 msgid ""
 msgstr ""
