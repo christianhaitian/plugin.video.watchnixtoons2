@@ -2,7 +2,6 @@ import re
 import six
 
 from lib.constants import *
-from lib.common import hash_file_get
 from lib.network import request_helper
 
 SITE_SETTINGS = {

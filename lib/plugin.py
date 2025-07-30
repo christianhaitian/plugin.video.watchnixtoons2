@@ -1552,7 +1552,6 @@ def actionResolve(params):
             MEDIA_HEADERS = {
                 'User-Agent': WNT2_USER_AGENT,
                 'Accept': 'video/webm,video/ogg,video/*;q=0.9,application/ogg;q=0.7,audio/*;q=0.6,*/*;q=0.5',
-                'Referer': BASEURL + '/'
             }
 
         if flags['redirect']:
@@ -1605,6 +1604,7 @@ def actionResolve(params):
                 item.setProperty('inputstream.adaptive.stream_selection_type', 'adaptive')
             #item.setProperty('inputstream.adaptive.config', '{"ssl_verify_peer":false}')
         else:
+            MEDIA_HEADERS[ 'Referer' ] = BASEURL + '/'
             item.setPath(urls['stream'] + '|' + '&'.join(key+'='+urllib_parse.quote_plus(val) for key, val in MEDIA_HEADERS.items()))
             if media_head:
                 # Disable Kodi's MIME-type request, since we already know what it is.
