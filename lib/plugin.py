@@ -1442,6 +1442,10 @@ def actionResolve(params):
         return
 
     if not urls['stream']:
+
+        if 'inc/embed/index.php' in urls['embed']:
+            urls['embed'] = urls['embed'].replace( 'inc/embed/index.php', 'inc/embed/video-js.php' )
+
         # Request the embedded player page.
         r2 = request_helper(
             # Sometimes a '&#038;' symbol is present in this URL.
