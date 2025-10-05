@@ -1415,11 +1415,11 @@ def actionResolve(params):
 
     elif 'uploads0" src=' in content:
 
-        urls['embed'] = re.search(r'<iframe id=\"(?:[a-zA-Z]+)uploads(?:[0-9]+)\" src=\"([^\"]+)\"', content, re.DOTALL).group(1)
+        urls['embed'] = re.search(r'<iframe\s*id=\"(?:[a-zA-Z]+)uploads(?:[0-9]+)\"\s*src=\"([^\"]+)\"', content, re.DOTALL).group(1)
 
-    elif 'cizgi-js-0" src=' in content:
+    elif '-js-0" src=' in content:
 
-        urls['embed'] = re.search(r'<iframe\s*rel=\"nofollow\"\s*id=\"cizgi\-js\-(?:[0-9]+)\" src=\"([^\"]+)\"', content, re.DOTALL).group(1)
+        urls['embed'] = re.search(r'<iframe\s*(?:rel=\"nofollow\")?\s*id=\"(?:[a-zA-Z]+)\-js\-(?:[0-9]+)\"\s*src=\"([^\"]+)\"', content, re.DOTALL).group(1)
 
     else:
 
@@ -1470,14 +1470,15 @@ def actionResolve(params):
     # Find the stream URLs.
     if 'getvid?evid' in html:
 
-        # Query-style stream getting.
-        source_url = re.search(r'"(/inc/embed/getvidlink[^"]+)', html, re.DOTALL).group(1)
+        if 'getRedirectedUrl(videoUrl)' in html:
+            source_url =  re.search(r'\$\.getJSON\(\"([^\"]+)\"', html, re.DOTALL).group(1)
+            source_url = "https://embed.wcostream.com/" + source_url + "&json"
+        else:
+            source_url = re.search(r'"(/inc/embed/getvidlink[^"]+)', html, re.DOTALL).group(1)
+            source_url = BASEURL + source_url
 
-        # The User-Agent for this request is somehow encoded into the media tokens, so we make
-        # sure to use the EXACT SAME value later, when playing the media, or else we get a
-        # HTTP 404 / 500 error.
         r3 = request_helper(
-            BASEURL + source_url,
+            source_url,
             data = None,
             extra_headers = {
                 'Accept': '*/*',
@@ -1486,6 +1487,8 @@ def actionResolve(params):
             }
         )
 
+        xbmc.log( source_url, xbmc.LOGWARNING )
+        xbmc.log( r3.text, xbmc.LOGWARNING )
         if not r3.ok:
             raise Exception('Sources XMLHttpRequest request failed')
 
@@ -1558,6 +1561,7 @@ def actionResolve(params):
                 'Accept': 'video/webm,video/ogg,video/*;q=0.9,application/ogg;q=0.7,audio/*;q=0.6,*/*;q=0.5',
             }
 
+        media_head = False
         if flags['redirect']:
             # Try to un-redirect the chosen media URL.
             # If it fails, try to un-resolve the backup URL.
@@ -1570,6 +1574,7 @@ def actionResolve(params):
             urls['stream'] = media_head.url
         else :
             urls['stream'] = urls['media']
+        xbmc.log( urls['stream'], xbmc.LOGWARNING )
 
         # Enforce the add-on debug setting to use HTTP access on the stream.
         if ADDON.getSetting('useHTTP') == 'true':
@@ -1608,7 +1613,9 @@ def actionResolve(params):
                 item.setProperty('inputstream.adaptive.stream_selection_type', 'adaptive')
             #item.setProperty('inputstream.adaptive.config', '{"ssl_verify_peer":false}')
         else:
+
             MEDIA_HEADERS[ 'Referer' ] = BASEURL + '/'
+
             item.setPath(urls['stream'] + '|' + '&'.join(key+'='+urllib_parse.quote_plus(val) for key, val in MEDIA_HEADERS.items()))
             if media_head:
                 # Disable Kodi's MIME-type request, since we already know what it is.
