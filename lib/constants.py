@@ -14,7 +14,7 @@ PLUGIN_NAME = PLUGIN_URL.replace("plugin://","")
 PLUGIN_TITLE = 'WatchNixtoons2'
 
 # Fake user-agent to help get past some cloudflare checks :(
-WNT2_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36'
+WNT2_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36'
 
 ADDON = xbmcaddon.Addon()
 

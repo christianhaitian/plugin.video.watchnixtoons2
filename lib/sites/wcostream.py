@@ -13,8 +13,8 @@ SITE_SETTINGS = {
     },
     'episode': {
         'regex': '''<a href="([^"]+).*?>([^<]+)''',
-        'start': '"catlist-listview"',
-        'end': '</ul>',
+        'start': 'name="pid"',
+        'end': '<!--CAT PAGE',
     },
     'series_search': {
         'regex': r'''<a href="(?P<link>[^"]+).*?>(?P<name>[^<]+)</a>(?P<img>)''',
@@ -63,7 +63,7 @@ SITE_SETTINGS = {
         'end': '</div>',
     },
     'parent': {
-        'regex': r'class=\"ildate\">\s*<a href=\"([^\"]+)\"(?:[^\>]+)>([^/<]+)</a>',
+        'regex': r'class=\"ildate\">\s*<a href=\"([^\"]+)\"(?:[^\>]+)?><span(?:[^\>]+)>([^/<]+)<',
         'start': '"lalyx"',
         'end': '',
     },
@@ -83,14 +83,16 @@ def premium_workaround_check( html, urls ):
 
     if playlist_url:
         playlist_url = playlist_url.group(1).replace( '/playlist-cat/', '/playlist-cat-jw/' )
-        html = request_helper(playlist_url if playlist_url.startswith('http') else BASEURL + playlist_url).text
+        playlist_url = playlist_url.replace( BASEDOMAIN, DOMAINS[2] ) if playlist_url.startswith('http') else 'https://' + DOMAINS[2] + playlist_url
+        html = request_helper(playlist_url).text
         media_id = re.search(r'if\s*\(mediaid === \"([0-9]+)\"\)', html)
         if media_id:
             media_id = media_id.group(1)
             playlist_url = re.search(r'playlist: \"(/playlist-cat-rss/[0-9]+\?[^\"]+)\",', html)
             if playlist_url:
                 playlist_url = playlist_url.group(1)
-                rss = request_helper(playlist_url if playlist_url.startswith('http') else BASEURL + playlist_url).text
+                playlist_url = playlist_url.replace( DOMAINS[2], BASEDOMAIN ) if playlist_url.startswith('http') else BASEURL + playlist_url
+                rss = request_helper(playlist_url).text
                 video_url = re.search(r'<mediaid>' + six.ensure_str( media_id ) + r'</mediaid>\s*<jwplayer:image>(?:[^<]+)</jwplayer:image>\s*<jwplayer:source file=\"([^\"]+)\"', rss)
                 if video_url:
                     urls[ 'stream' ] = video_url.group(1)

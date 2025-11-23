@@ -8,7 +8,7 @@ SITE_SETTINGS = {
     },
     'episode': {
         'regex': '''<a href="([^"]+).*?>([^<]+)''',
-        'start': '"sidebar_right3"',
+        'start': 'name="pid"',
         'end': '"sidebar-all"',
     },
     'series_search': {
@@ -58,7 +58,7 @@ SITE_SETTINGS = {
         'end': '</div>',
     },
     'parent': {
-        'regex': r'<h2><a href=\"([^\"]+)\"(?:[^\>]+)>([^/<]+)</a>',
+        'regex': r'<h2><a href=\"([^\"]+)\"(?:[^\>]+)?><span(?:[^\>]+)>([^/<]+)<',
         'start': '"header-tag"',
         'end': '',
     },

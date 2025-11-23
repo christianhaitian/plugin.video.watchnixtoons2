@@ -233,6 +233,7 @@ def actionCatalogSection(params):
 
             # removes base so can be used in hash table
             entry_url = base_url_remove( BASEURL, entry[0] )
+            img_url = entry_url.replace( '/season=all&lang=sub', '' ).replace( '/season=all&lang=dub', '' )
             entry_art = art_dict
 
             # If there's metadata for this entry (requested by the user with "Show Information"), use it.
@@ -244,7 +245,7 @@ def actionCatalogSection(params):
 
                 # do this here so we only need to create a hash once per entry
                 if show_thumbs and from_hash:
-                    url_hash = generate_md5( entry_url )
+                    url_hash = generate_md5( img_url )
 
                 # Decide what artwork to show
                 if show_thumbs and from_hash is False:
@@ -253,7 +254,7 @@ def actionCatalogSection(params):
                         # there were cases of thumbnail URL just consisting of 'https:'
                         # so back up to get thumbnail from fanart
                         if entry[2] == 'https:':
-                            entry[2] = IMAGES_URL + '/thumbs' + entry_url + '.jpg'
+                            entry[2] = IMAGES_URL + '/thumbs' + img_url + '.jpg'
 
                         entry_art[ 'thumb' ] = entry[2]
                         entry_art[ 'poster' ] = entry[2]
@@ -270,9 +271,9 @@ def actionCatalogSection(params):
                 entryParams = params
 
             # add fanart if option is selected
-            # this is addded last as is not affected by anything else
+            # this is added last so is not affected by anything else
             if show_fanart:
-                entry_art['fanart'] = IMAGES_URL + '/thumbs' + entry_url + '.jpg'
+                entry_art['fanart'] = IMAGES_URL + '/thumbs' + img_url + '.jpg'
 
             yield (
                 build_url({'action': action, 'url': entry_url}),
@@ -1487,8 +1488,6 @@ def actionResolve(params):
             }
         )
 
-        xbmc.log( source_url, xbmc.LOGWARNING )
-        xbmc.log( r3.text, xbmc.LOGWARNING )
         if not r3.ok:
             raise Exception('Sources XMLHttpRequest request failed')
 
@@ -1574,7 +1573,6 @@ def actionResolve(params):
             urls['stream'] = media_head.url
         else :
             urls['stream'] = urls['media']
-        xbmc.log( urls['stream'], xbmc.LOGWARNING )
 
         # Enforce the add-on debug setting to use HTTP access on the stream.
         if ADDON.getSetting('useHTTP') == 'true':
