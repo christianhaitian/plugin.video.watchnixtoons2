@@ -12,7 +12,7 @@ SITE_SETTINGS = {
         'end': '"bartitle"',
     },
     'episode': {
-        'regex': '''<a href="([^"]+).*?>([^<]+)''',
+        'regex': r'''<a href=\"(?P<link>[^\"]+).*?(data-lang=\"(?P<type>[^\"]+)\")?>(?:<span>)?(?P<name>[^<]+)''',
         'start': 'name="pid"',
         'end': '<!--CAT PAGE',
     },

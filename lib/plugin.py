@@ -260,11 +260,7 @@ def actionCatalogSection(params):
                         entry_art[ 'poster' ] = entry[2]
 
                 elif show_thumbs and from_hash and hashes.get( url_hash, False ):
-                    img_id = hashes.get( url_hash, '' )
-                    if img_id.startswith( 'tm-' ):
-                        thumb_from_hash = TMDB_IMAGES_URL + '/t/p/w500/' + img_id.replace( 'tm-', '' ) + '.jpg'
-                    else:
-                        thumb_from_hash = IMAGES_URL + '/catimg/' + img_id + '.jpg' + get_thumbnail_headers()
+                    thumb_from_hash = thumb_path_get( hashes.get( url_hash, '' ) )
                     entry_art = {'icon': thumb_from_hash, 'thumb': thumb_from_hash, 'poster': thumb_from_hash}
 
                 entry_plot = ''
@@ -311,7 +307,7 @@ def actionEpisodesMenu(params):
             thumb,
             plot,
             tuple(
-                match.groups()
+                (match.group('link'), match.group('name'), match.group('type'))
                 for match in re.finditer(
                     SITE_SETTINGS[ 'episode' ][ 'regex' ], html[data_start_index : html.find( SITE_SETTINGS[ 'episode' ][ 'end' ] )]
                 )
@@ -339,7 +335,17 @@ def actionEpisodesMenu(params):
         item_params = {'action': 'actionResolve', 'url': None}
         listIter = iter(listData[2]) if ADDON.getSetting('reverseEpisodes') == 'true' else reversed(listData[2])
 
-        for url, title in listIter:
+        for url, title, episode_type in listIter:
+
+            # get language selected from url
+            show_type = re.search(r'lang=(dub|sub)', params['url'])
+            if show_type:
+                show_type = str(show_type.group(1))
+
+                # apply validation to lang variables
+                # then skip episode if do not need to show it
+                if episode_type and episode_type in LANG_TYPES and episode_type != show_type:
+                    continue
 
             # add fanart if option is selected
             if ADDON_VIDEO_FANART:
@@ -399,7 +405,7 @@ def actionLatestMoviesMenu(params):
             if ADDON_SERIES_THUMBS:
                 entry_hash = generate_md5( entry_url.replace( BASEURL, '' ) )
                 if entry_hash in hashes.keys():
-                    thumb_from_hash = IMAGES_URL + '/catimg/' + hashes[ entry_hash ] + '.jpg'
+                    thumb_from_hash = thumb_path_get( hashes.get( entry_hash, '' ) )
                     art_dict = {'icon': ADDON_ICON, 'thumb': thumb_from_hash, 'poster': thumb_from_hash}
 
             if entry_url in infoItems:
@@ -460,10 +466,14 @@ def actionRecentlyWatchedMenu(params):
 
                 # use default addon dict by default
                 art_dict = ADDON_ICON_DICT
+                if ADDON_SERIES_THUMBS:
 
-                if ADDON_SERIES_THUMBS and title_hash in hashes.keys():
-                    thumb_from_hash = IMAGES_URL + '/catimg/' + hashes[ title_hash ] + '.jpg'
-                    art_dict = {'icon': ADDON_ICON, 'thumb': thumb_from_hash, 'poster': thumb_from_hash}
+                    img_url = title_data[ 'url' ].replace( '/season=all&lang=sub', '' ).replace( '/season=all&lang=dub', '' )
+                    url_hash = generate_md5( img_url )
+
+                    if url_hash in hashes.keys():
+                        thumb_from_hash = thumb_path_get( hashes.get( url_hash, '' ) )
+                        art_dict = {'icon': ADDON_ICON, 'thumb': thumb_from_hash, 'poster': thumb_from_hash}
 
             yield (
                 build_url({'action': 'actionEpisodesMenu', 'url': title_data[ 'url' ]}),
@@ -1701,6 +1711,15 @@ def domains_get():
         'm.watchcartoononline.io',
         'www.thewatchcartoononline.tv'
     )
+
+def thumb_path_get( thumb_id ):
+
+    if thumb_id:
+        if thumb_id.startswith( 'tm-' ):
+            return TMDB_IMAGES_URL + '/t/p/w500/' + thumb_id.replace( 'tm-', '' ) + '.jpg'
+        return IMAGES_URL + '/catimg/' + thumb_id + '.jpg' + get_thumbnail_headers()
+    
+    return ''
 
 def solve_media_redirect(url, headers):
 

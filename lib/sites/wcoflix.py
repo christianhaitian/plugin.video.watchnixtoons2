@@ -7,7 +7,7 @@ SITE_SETTINGS = {
         'end': '<script>',
     },
     'episode': {
-        'regex': '''<a href="([^"]+).*?>([^<]+)''',
+        'regex': r'''<a href=\"(?P<link>[^\"]+).*?(data-lang=\"(?P<type>[^\"]+)\")?>(?:<span>)?(?P<name>[^<]+)''',
         'start': 'name="pid"',
         'end': '"sidebar-all"',
     },

@@ -78,3 +78,8 @@ URL_PATHS = {
     'search': '/search',
     'genre': '/search-by-genre'
 }
+
+LANG_TYPES = [
+    'sub',
+    'dub',
+]
