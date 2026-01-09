@@ -233,7 +233,8 @@ def actionCatalogSection(params):
 
             # removes base so can be used in hash table
             entry_url = base_url_remove( BASEURL, entry[0] )
-            img_url = entry_url.replace( '/season=all&lang=sub', '' ).replace( '/season=all&lang=dub', '' )
+            img_url = entry_url.replace( '?season=all', '/season=all' )
+            img_url = img_url.replace( '/season=all&lang=sub', '' ).replace( '/season=all&lang=dub', '' )
             entry_art = art_dict
 
             # If there's metadata for this entry (requested by the user with "Show Information"), use it.
@@ -468,7 +469,8 @@ def actionRecentlyWatchedMenu(params):
                 art_dict = ADDON_ICON_DICT
                 if ADDON_SERIES_THUMBS:
 
-                    img_url = title_data[ 'url' ].replace( '/season=all&lang=sub', '' ).replace( '/season=all&lang=dub', '' )
+                    img_url = title_data[ 'url' ].replace( '?season=all', '/season=all' )
+                    img_url = img_url.replace( '/season=all&lang=sub', '' ).replace( '/season=all&lang=dub', '' )
                     url_hash = generate_md5( img_url )
 
                     if url_hash in hashes.keys():

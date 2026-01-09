@@ -86,6 +86,11 @@ Random updates by lolage.
 - Fix wcostream premium workaround</news>
         <assets>
             <icon>icon.png</icon>
+            <fanart>fanart.jpg</fanart>
+            <screenshot>screenshot4.jpg</screenshot>
+            <screenshot>screenshot3.jpg</screenshot>
+            <screenshot>screenshot2.png</screenshot>
+            <screenshot>screenshot1.jpg</screenshot>
         </assets>
     </extension>
 </addon>
