@@ -235,6 +235,7 @@ def actionCatalogSection(params):
             entry_url = base_url_remove( BASEURL, entry[0] )
             img_url = entry_url.replace( '?season=all', '/season=all' )
             img_url = img_url.replace( '/season=all&lang=sub', '' ).replace( '/season=all&lang=dub', '' )
+            img_url = img_url.replace( '/season=all&lang=cartoon', '' ).replace( '/season=all', '' )
             entry_art = art_dict
 
             # If there's metadata for this entry (requested by the user with "Show Information"), use it.
@@ -471,6 +472,7 @@ def actionRecentlyWatchedMenu(params):
 
                     img_url = title_data[ 'url' ].replace( '?season=all', '/season=all' )
                     img_url = img_url.replace( '/season=all&lang=sub', '' ).replace( '/season=all&lang=dub', '' )
+                    img_url = img_url.replace( '/season=all&lang=cartoon', '' ).replace( '/season=all', '' )
                     url_hash = generate_md5( img_url )
 
                     if url_hash in hashes.keys():
@@ -1159,7 +1161,7 @@ def makeLatestCatalog(params):
         # with no alphabet categories.
         return {
             'LATEST': tuple(
-                (match.group('link'), match.group('name'), "https:" + match.group('img'))
+                (match.group('link'), match.group('name'), ensure_url_schema(match.group('img')))
                 for match in re.finditer(
                     SITE_SETTINGS[ 'latest' ][ 'regex' ], html[data_start_index : html.find( SITE_SETTINGS[ 'latest' ][ 'end' ], data_start_index )]
                 )
@@ -1167,7 +1169,7 @@ def makeLatestCatalog(params):
         }
 
     return catalogFromIterable(
-        (match.group('link'), match.group('name'), "https:" + match.group('img'))
+        (match.group('link'), match.group('name'), ensure_url_schema(match.group('img')))
         for match in re.finditer(
             SITE_SETTINGS[ 'latest' ][ 'regex' ], html[data_start_index : html.find( SITE_SETTINGS[ 'latest' ][ 'end' ], data_start_index )]
         )
@@ -1395,13 +1397,6 @@ def actionResolve(params):
         urls = is_premium
         html = content
 
-    # method for .m3u8
-    elif '"vjs_iframe"' in content:
-
-        xbmc_debug( 'm3u8 Detected' )
-        urls['embed'] = re.search(r'<iframe id=\"(?:[a-zA-Z0-9-]+)\" class=\"vjs_iframe\" rel=\"nofollow\" src=\"([^\"]+)\"', content, re.DOTALL).group(1)
-        flags['m3u8'] = True
-
     # On rare cases an episode might have several "chapters", which are video players on the page.
     elif 'playChapters' in params or ADDON.getSetting('chapterEpisodes') == 'true':
 
@@ -1433,6 +1428,13 @@ def actionResolve(params):
     elif '-js-0" src=' in content:
 
         urls['embed'] = re.search(r'<iframe\s*(?:rel=\"nofollow\")?\s*id=\"(?:[a-zA-Z]+)\-js\-(?:[0-9]+)\"\s*src=\"([^\"]+)\"', content, re.DOTALL).group(1)
+
+    # method for .m3u8
+    elif '"vjs_iframe"' in content:
+
+        xbmc_debug( 'm3u8 Detected' )
+        urls['embed'] = re.search(r'<iframe id=\"(?:[a-zA-Z0-9-]+)\" class=\"vjs_iframe\" rel=\"nofollow\" src=\"([^\"]+)\"', content, re.DOTALL).group(1)
+        flags['m3u8'] = True
 
     else:
 
