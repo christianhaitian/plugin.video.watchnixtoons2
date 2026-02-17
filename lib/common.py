@@ -82,15 +82,25 @@ def base_url_remove( base_url, url ):
 
     return url
 
+def ensure_url_schema( url ):
+
+    """ returns a url that has https """
+
+    if url:
+        if url.startswith('//'):
+            return 'https:' + url
+
+    return url
+
+
 def ensure_full_url( base_url, url ):
 
     """ returns a full url """
 
     if url:
+        url = ensure_url_schema( url )
         if url.startswith('http'):
             return url
-        if url.startswith('//'):
-            return 'https:' + url
         if url.startswith('/'):
             return base_url + url
 
