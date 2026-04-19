@@ -43,7 +43,7 @@ jobs:
     steps:
     # Time to pull the proper branch of the watchnixtoons2 repo to start the plugin update
     - name: checkout_plugin
-      uses: actions/checkout@v3
+      uses: actions/checkout@v6
       with:
         ref: ${{ github.ref_name }}
         fetch-depth: 1
@@ -105,7 +105,7 @@ jobs:
 
     # Both the watchnixtoons2 repo and ch.repo repo need to have the same secret token set or the push willl fail
     - name: checkout_chrepo
-      uses: actions/checkout@v3
+      uses: actions/checkout@v6
       with:
         token: ${{ secrets.CHREPO_TOKEN }}
         repository: christianhaitian/ch.repo
