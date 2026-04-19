@@ -1421,6 +1421,13 @@ def actionResolve(params):
             # User cancelled the chapter selection.
             return
 
+    # method for .m3u8
+    elif '"vjs_iframe"' in content:
+
+        xbmc_debug( 'm3u8 Detected' )
+        urls['embed'] = re.search(r'<iframe id=\"(?:[a-zA-Z0-9-]+)\" class=\"vjs_iframe\" rel=\"nofollow\" src=\"([^\"]+)\"', content, re.DOTALL).group(1)
+        flags['m3u8'] = True
+
     elif 'uploads0" src=' in content:
 
         urls['embed'] = re.search(r'<iframe\s*id=\"(?:[a-zA-Z]+)uploads(?:[0-9]+)\"\s*src=\"([^\"]+)\"', content, re.DOTALL).group(1)
@@ -1428,13 +1435,6 @@ def actionResolve(params):
     elif '-js-0" src=' in content:
 
         urls['embed'] = re.search(r'<iframe\s*(?:rel=\"nofollow\")?\s*id=\"(?:[a-zA-Z]+)\-js\-(?:[0-9]+)\"\s*src=\"([^\"]+)\"', content, re.DOTALL).group(1)
-
-    # method for .m3u8
-    elif '"vjs_iframe"' in content:
-
-        xbmc_debug( 'm3u8 Detected' )
-        urls['embed'] = re.search(r'<iframe id=\"(?:[a-zA-Z0-9-]+)\" class=\"vjs_iframe\" rel=\"nofollow\" src=\"([^\"]+)\"', content, re.DOTALL).group(1)
-        flags['m3u8'] = True
 
     else:
 

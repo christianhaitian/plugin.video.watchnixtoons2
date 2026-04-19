@@ -3,7 +3,7 @@
 import sys
 import xbmcaddon
 
-IMAGES_URL = 'https://cdn.animationexplore.com'
+IMAGES_URL = 'https://cdn.animationexplorer.com'
 TMDB_IMAGES_URL = 'https://image.tmdb.org'
 
 THUMBS_BASEURL = 'https://doko-desuka.github.io/128h/'
@@ -13,8 +13,8 @@ PLUGIN_URL = sys.argv[0]
 PLUGIN_NAME = PLUGIN_URL.replace("plugin://","")
 PLUGIN_TITLE = 'WatchNixtoons2'
 
-# Fake user-agent to help get past some cloudflare checks :(
-WNT2_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36'
+# Fake user-agent to help get past some cloudflare checks
+WNT2_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36'
 
 ADDON = xbmcaddon.Addon()
 
