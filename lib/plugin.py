@@ -711,7 +711,7 @@ def actionRestoreDatabase(params):
 
     # Update the database.
 
-    OLD_DOMAINS = domains_get()
+    OLD_DOMAINS = site_domains_get()
 
     replaceDomainFunc = lambda original, oldDomain: original.replace( 'https%3A%2F%2F' + oldDomain, '' )
     totalUpdates = 0
@@ -791,18 +791,27 @@ def actionUpdateFavourites(params):
     file = xbmcvfs.File(FAVOURITES_PATH)
     favoritesText = file.read()
     file.close()
-    originalText = favoritesText[:] # Get a backup copy of the content.
+    # Get a backup copy of the content.
+    originalText = favoritesText[:]
 
-    OLD_DOMAINS = domains_get()
+    OLD_SITE_DOMAINS = site_domains_get()
+    OLD_THUMBNAIL_DOMAINS = thumbnail_domains_get()
 
-    replaceDomainFunc = lambda original, oldDomain: original.replace( 'https%3A%2F%2F' + oldDomain, '' )
-
-    if any(oldDomain in originalText for oldDomain in OLD_DOMAINS):
+    # check if any old domains exist in favourites
+    if any(oldDomain in originalText for oldDomain in OLD_SITE_DOMAINS) or \
+        any(oldDomain in originalText for oldDomain in OLD_THUMBNAIL_DOMAINS):
 
         if six.PY3:
             from functools import reduce
 
-        favoritesText = reduce(replaceDomainFunc, domains_get(), favoritesText)
+        # removes base of the site domain due to no longer needing it since v0.12.0
+        favoritesText = reduce(
+            lambda original, oldDomain: original.replace( 'https%3A%2F%2F' + oldDomain, '' ),
+            OLD_SITE_DOMAINS, favoritesText)
+        # replace thumbnail domain
+        favoritesText = reduce(
+            lambda original, oldDomain: original.replace( 'https://' + oldDomain, IMAGES_URL ),
+            OLD_THUMBNAIL_DOMAINS, favoritesText)
 
         try:
             file = xbmcvfs.File(FAVOURITES_PATH, 'w')
@@ -1340,7 +1349,7 @@ def actionResolve(params):
     """ resolves video URL from site URL """
 
     urls = {
-        'page': ensure_current_domain( params['url'], BASEDOMAIN, domains_get() ),
+        'page': ensure_current_domain( params['url'], BASEDOMAIN, site_domains_get() ),
         'embed': None,
         'stream': None,
         'media': None,
@@ -1697,9 +1706,12 @@ def get_thumbnail_headers():
         '&Accept=image%2Fwebp%2C%2A%2F%2A&Referer=' + \
         urllib_parse.quote_plus(BASEURL+'/') + cookies
 
-def domains_get():
+def site_domains_get():
 
-    """ Returns possible domains, in the order of likeliness. """
+    """
+    Returns possible site domains,
+    in the order of likeliness.
+    """
 
     return (
         'www.wcostream.tv',
@@ -1713,7 +1725,18 @@ def domains_get():
         'm.wcostream.com',
         'www.watchcartoononline.io',
         'm.watchcartoononline.io',
-        'www.thewatchcartoononline.tv'
+        'www.thewatchcartoononline.tv',
+    )
+
+def thumbnail_domains_get():
+
+    """
+    Returns possible thumbnail domains,
+    in the order of likeliness.
+    """
+
+    return (
+        'cdn.animationexplore.com',
     )
 
 def thumb_path_get( thumb_id ):
