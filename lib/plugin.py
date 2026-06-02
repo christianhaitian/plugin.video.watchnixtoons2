@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 import re
 import sys
+import json
 import six
+import uuid
 
 from itertools import chain
 from six.moves import urllib_parse
@@ -1363,10 +1365,7 @@ def actionResolve(params):
     }
 
     r = request_helper( urls['page'] )
-    content = r.content
-
-    if six.PY3:
-        content = content.decode('utf-8')
+    content = r.text
 
     # get data & mark as recently watched
     parent = get_parent_page( content )
@@ -1468,7 +1467,20 @@ def actionResolve(params):
     if not urls['stream']:
 
         if 'inc/embed/index.php' in urls['embed']:
-            urls['embed'] = urls['embed'].replace( 'inc/embed/index.php', 'inc/embed/video-js.php' )
+            # get pid from url
+            pid = re.search(r'&pid\=([0-9]+)', urls['embed'])
+            n_val = uuid.uuid4().hex
+            # register nonce value
+            n = request_helper(
+                'https://embed.wcostream.com/ad-verify',
+                data = json.dumps({'nonce':n_val, 'status':'clear', 'id': pid.group(1)}),
+                extra_headers = {
+                    'Content-Type': 'application/json',
+                    'Referer': urls['embed'],
+                }
+            )
+
+            urls['embed'] = urls['embed'].replace( 'inc/embed/index.php', 'inc/embed/video-js-old.php' ) + '&n=' + n_val
 
         # Request the embedded player page.
         r2 = request_helper(
