@@ -4,6 +4,7 @@ import sys
 import json
 import six
 import uuid
+import time
 
 from itertools import chain
 from six.moves import urllib_parse
@@ -1467,11 +1468,22 @@ def actionResolve(params):
     if not urls['stream']:
 
         if 'inc/embed/index.php' in urls['embed']:
+
+            flag = '__abd_' + uuid.uuid4().hex[:8]
+            n1 = request_helper(
+                'https://embed.wcostream.com/assets/ads/advertisement.js?flag=' + flag + '&_=' + str( int( time.time() * 1000 )  ),
+                data=None,
+                extra_headers = {
+                    'Accept': '*/*',
+                    'Referer': urls['embed'],
+                }
+            )
+
             # get pid from url
             pid = re.search(r'&pid\=([0-9]+)', urls['embed'])
             n_val = uuid.uuid4().hex
             # register nonce value
-            n = request_helper(
+            n2 = request_helper(
                 'https://embed.wcostream.com/ad-verify',
                 data = json.dumps({'nonce':n_val, 'status':'clear', 'id': pid.group(1)}),
                 extra_headers = {
@@ -1481,6 +1493,7 @@ def actionResolve(params):
             )
 
             urls['embed'] = urls['embed'].replace( 'inc/embed/index.php', 'inc/embed/video-js-old.php' ) + '&n=' + n_val
+            time.sleep(5)
 
         # Request the embedded player page.
         r2 = request_helper(
