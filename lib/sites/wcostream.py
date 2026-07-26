@@ -17,7 +17,7 @@ SITE_SETTINGS = {
         'end': '<!--CAT PAGE',
     },
     'series_search': {
-        'regex': r'''<a href="(?P<link>[^"]+).*?>(?P<name>[^<]+)</a>(?P<img>)''',
+        'regex': r'''<a href=\"(?P<link>[^\"]+)\"\s*title=\"(?P<name>[^\"]+)\">\s*<img\s*src=\"(?P<img>[^\"]+)''',
         'start': 'aramamotoru',
         'end': 'cizgiyazisi',
     },

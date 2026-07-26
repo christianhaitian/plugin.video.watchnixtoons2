@@ -36,5 +36,7 @@
         <setting type="lsep" label="30019"/>
         <setting id="useHTTP" label="30020" type="bool" default="false"/>
         <setting id="baseURL" label="30022" type="enum" default="0" values="wcostream.tv|wcoflix.tv|wcoforever.net"/>
+
+        <setting id="requestTimes" type="text" default="" visible="false"/>
     </category>
 </settings>
