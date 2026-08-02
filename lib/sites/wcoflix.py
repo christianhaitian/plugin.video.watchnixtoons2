@@ -48,9 +48,9 @@ SITE_SETTINGS = {
         'end': '</ul>',
     },
     'latest_movies': {
-        'regex': '''<a href="([^"]+).*?>([^<]+)''',
-        'start': '"sidebar_right3"',
-        'end': '"sidebar-all"',
+        'regex': r'href=\"([^\"]+)\"\s*[^>]*>\s*<span>([^<]+)',
+        'start': 'id="episodeList"',
+        'end': 'class="result-meta"',
     },
     'popular': {
         'regex': '''<a href="([^"]+).*?>([^<]+)''',
