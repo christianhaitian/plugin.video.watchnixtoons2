@@ -31,37 +31,31 @@ __language__ = ADDON.getLocalizedString
 
 def actionMenu(params):
 
-    def _menuItem(title, data, color):
-        item = xbmcgui.ListItem('[B][COLOR ' + color + ']' + title + '[/COLOR][/B]', label2 = title)
-        item.setArt(ADDON_ICON_DICT)
-        item_set_info( item, {'title': title, 'plot': title} )
-        return (build_url(data), item, True)
-
     xbmcplugin.addDirectoryItems(
         PLUGIN_ID,
         (
             # Latest
-            _menuItem( __language__(30050), {'action': 'actionCatalogMenu', 'path': URL_PATHS['latest']}, 'mediumaquamarine' ),
+            menu_item( __language__(30050), {'action': 'actionCatalogMenu', 'path': URL_PATHS['latest']}, 'mediumaquamarine' ),
             # Latest Movies - Make the Latest Movies menu go straight to the item list, no catalog.
-            _menuItem( __language__(30051), {'action': 'actionLatestMoviesMenu', 'path': URL_PATHS['latestmovies']}, 'mediumaquamarine'),
+            menu_item( __language__(30051), {'action': 'actionLatestMoviesMenu', 'path': URL_PATHS['latestmovies']}, 'mediumaquamarine'),
             # Ongoing & Popular
-            _menuItem( __language__(30052), {'action': 'actionCatalogMenu', 'path': URL_PATHS['popular']}, 'mediumaquamarine'),
+            menu_item( __language__(30052), {'action': 'actionCatalogMenu', 'path': URL_PATHS['popular']}, 'mediumaquamarine'),
             # Dubbed
-            _menuItem( __language__(30053), {'action': 'actionCatalogMenu', 'path': URL_PATHS['dubbed']}, 'lightgreen'),
+            menu_item( __language__(30053), {'action': 'actionCatalogMenu', 'path': URL_PATHS['dubbed']}, 'lightgreen'),
             # Cartoons
-            _menuItem( __language__(30054), {'action': 'actionCatalogMenu', 'path': URL_PATHS['cartoons']}, 'lightgreen'),
+            menu_item( __language__(30054), {'action': 'actionCatalogMenu', 'path': URL_PATHS['cartoons']}, 'lightgreen'),
             # Subbed
-            _menuItem( __language__(30055), {'action': 'actionCatalogMenu', 'path': URL_PATHS['subbed']}, 'lightgreen'),
+            menu_item( __language__(30055), {'action': 'actionCatalogMenu', 'path': URL_PATHS['subbed']}, 'lightgreen'),
             # Movies
-            _menuItem( xbmc.getLocalizedString(342), {'action': 'actionCatalogMenu', 'path': URL_PATHS['movies']}, 'lightgreen'),
+            menu_item( xbmc.getLocalizedString(342), {'action': 'actionCatalogMenu', 'path': URL_PATHS['movies']}, 'lightgreen'),
             # OVAs
-            _menuItem( __language__(30056), {'action': 'actionCatalogMenu', 'path': URL_PATHS['ova']}, 'lightgreen'),
+            menu_item( __language__(30056), {'action': 'actionCatalogMenu', 'path': URL_PATHS['ova']}, 'lightgreen'),
             # Recently Watched
-            _menuItem( __language__(30057), {'action': 'actionRecentlyWatchedMenu', 'path': 'recently_watched'}, 'orange'),
+            menu_item( __language__(30057), {'action': 'actionRecentlyWatchedMenu', 'path': 'recently_watched'}, 'orange'),
             # Search - Non-web path.
-            _menuItem( xbmc.getLocalizedString(137), {'action': 'actionSearchMenu',  'path': 'search'}, 'lavender'),
+            menu_item( xbmc.getLocalizedString(137), {'action': 'actionSearchMenu',  'path': 'search'}, 'lavender'),
             # Settings - Non-web path.
-            _menuItem( xbmc.getLocalizedString(1390), {'action': 'actionShowSettings','path': 'settings'}, 'lavender')
+            menu_item( xbmc.getLocalizedString(1390), {'action': 'actionShowSettings','path': 'settings'}, 'lavender')
         )
     )
     xbmcplugin.endOfDirectory(PLUGIN_ID)
@@ -205,6 +199,19 @@ def actionCatalogSection(params):
             for path_tmp in [ URL_PATHS['dubbed'], URL_PATHS['cartoons'], URL_PATHS['subbed'] ]:
                 hashes.update( hash_file_get( path_tmp ) )
 
+        # the reason popular thumbs is in it's own setting is due to loading all the hashes at one go
+        # which could cause slower machines to struggle,
+        # due to this I am also putting the genre results behind that same option
+        elif ADDON_POPULAR_THUMBS and URL_PATHS['genre'] + '/page/' in path:
+
+            show_thumbs = True
+            from_hash = True
+            hashes = {}
+
+            # get all hash files and combine as could be in any of them
+            for path_tmp in [ URL_PATHS['dubbed'], URL_PATHS['cartoons'], URL_PATHS['subbed'] ]:
+                hashes.update( hash_file_get( path_tmp ) )
+
         elif ADDON_SERIES_THUMBS and path in [ URL_PATHS['dubbed'], URL_PATHS['cartoons'], URL_PATHS['subbed'] ]:
 
             show_thumbs = True
@@ -225,8 +232,20 @@ def actionCatalogSection(params):
             if ADDON_VIDEO_FANART:
                 show_fanart = True
 
-        elif path == URL_PATHS[ 'search' ] and params.get('searchType', False) == 'series':
-            show_thumbs = True
+        elif path == URL_PATHS[ 'search' ]:
+
+            if params.get('searchType', False) == 'movies':
+                show_thumbs = True
+                from_hash = True
+
+                hashes = hash_file_get( 'movie-list' )
+                # we can also use the fanart for movies and OVAs
+                if ADDON_VIDEO_FANART:
+                    show_fanart = True
+
+            elif params.get('searchType', False) == 'series':
+                show_thumbs = True
+
 
         # loop through entries and decide what to show
         for entry in section_items:
@@ -529,51 +548,18 @@ def actionSearchMenu(params):
         # URL_PATHS['search'] - special, non-web path used by 'getCatalogProperty()'.
         PLUGIN_ID,
         (
-            (
-                build_url({
-                    'action': 'actionSearchMenu',
-                    'path': URL_PATHS['search'],
-                    'searchType': 'series',
-                    'searchTitle': __language__(30100)
-                }),
-                xbmcgui.ListItem('[COLOR lavender][B]' + __language__(30100) + '[/B][/COLOR]'),
-                True
-            ),
-            (
-                build_url({
-                    'action': 'actionSearchMenu',
-                    'path': URL_PATHS['search'],
-                    'searchType': 'movies',
-                    'searchTitle': __language__(30101)
-                }),
-                xbmcgui.ListItem('[COLOR lavender][B]' + __language__(30101) + '[/B][/COLOR]'),
-                True
-            ),
-            (
-                build_url({
-                    'action': 'actionSearchMenu',
-                    'path': URL_PATHS['search'],
-                    'searchType': 'episodes',
-                    'searchTitle': __language__(30102)
-                }),
-                xbmcgui.ListItem('[COLOR lavender][B]' + __language__(30102) + '[/B][/COLOR]'),
-                True
-            ),
-            (
-                build_url({'action': 'actionGenresMenu', 'path': URL_PATHS['genre']}),
-                xbmcgui.ListItem('[COLOR lavender][B]' + __language__(30103) + '[/B][/COLOR]'),
-                True
-            ),
-            (
-                build_url({'action': 'actionTraktMenu', 'path': 'trakt'}),
-                xbmcgui.ListItem('[COLOR lavender][B]' + __language__(30104) + '[/B][/COLOR]'),
-                True
-            ),
-            (
-                build_url({'action': 'actionSearchHistory', 'path': 'searchHistory'}),
-                xbmcgui.ListItem('[COLOR lavender][B]' + __language__(30105) + '[/B][/COLOR]'),
-                True
-            )
+            # Search: Series
+            menu_item( __language__(30100), {'action': 'actionSearchMenu', 'path': URL_PATHS['search'], 'searchType': 'series','searchTitle': __language__(30100)}, 'lightgreen' ),
+            # Search: Movies
+            menu_item( __language__(30101), {'action': 'actionSearchMenu', 'path': URL_PATHS['search'], 'searchType': 'movies', 'searchTitle': __language__(30101)}, 'lightgreen'),
+            # Search: Episodes
+            menu_item( __language__(30102), {'action': 'actionSearchMenu', 'path': URL_PATHS['search'], 'searchType': 'episodes', 'searchTitle': __language__(30102)}, 'lightgreen'),
+            # Search: Genre
+            menu_item( __language__(30103), {'action': 'actionGenresMenu', 'path': URL_PATHS['genre']}, 'mediumaquamarine'),
+            # Search: Trakt
+            menu_item( __language__(30104), {'action': 'actionTraktMenu', 'path': 'trakt'}, 'pink'),
+            # Search: Histoy
+            menu_item( __language__(30105), {'action': 'actionSearchHistory', 'path': 'searchHistory'})
         )
     )
 
@@ -649,7 +635,7 @@ def actionGenresMenu(params):
                     'path': '/search-by-genre/page/' + match.group(1).rsplit('/', 1)[1],
                     'searchType': 'genres'
                 }),
-                xbmcgui.ListItem(match.group(2)),
+                makeListItem(match.group(2), '', ADDON_ICON_DICT, match.group(2), True),
                 True
             )
             for match in re.finditer( SITE_SETTINGS[ 'genre' ][ 'regex' ], html[data_start_index : html.find( SITE_SETTINGS[ 'genre' ][ 'end' ] )])
@@ -984,7 +970,21 @@ def get_title_info(unescaped_title):
 
     return (unescaped_title.strip(' -'), None, None, None, '')
 
-def makeListItem(title, url, art_dict, plot, is_folder, is_special, oldParams, isRecent=False):
+def menu_item( title, data, color=None, bold=True ):
+
+    if color:
+        title = '[COLOR ' + color + ']' + title + '[/COLOR]'
+
+    if bold:
+        title = '[B]' + title + '[/B]'
+
+    line_item = xbmcgui.ListItem(title, label2 = title)
+    line_item.setArt(ADDON_ICON_DICT)
+    item_set_info( line_item, {'title': title, 'plot': title} )
+
+    return (build_url(data), line_item, True)
+
+def makeListItem(title, url, art_dict, plot='', is_folder=False, is_special=False, oldParams=None, isRecent=False):
 
     unescaped_title = unescapeHTMLText(title)
     plot = unescapeHTMLText(plot)
@@ -1054,7 +1054,7 @@ def makeListItem(title, url, art_dict, plot, is_folder, is_special, oldParams, i
 
     return item
 
-def makeListItemClean(title, url, art_dict, plot, is_folder, is_special, oldParams):
+def makeListItemClean(title, url, art_dict, plot='', is_folder=False, is_special=False, oldParams=None):
 
     """
     Variant of the 'makeListItem()' function
@@ -1206,7 +1206,8 @@ def makeSeriesSearchCatalog(params):
     html = request_helper(
         BASEURL + '/search',
         data={'catara': params['query'], 'konuara': 'series'},
-        extra_headers={'Referer': BASEURL + '/'}
+        extra_headers={'Referer': BASEURL + '/'},
+        timeout=20
     ).text
 
     data_start_index = html.find( SITE_SETTINGS[ 'series_search' ][ 'start' ] )
@@ -1217,7 +1218,7 @@ def makeSeriesSearchCatalog(params):
         (match.group('link'), match.group('name'), match.group('img'))
         for match in re.finditer(
             SITE_SETTINGS[ 'series_search' ][ 'regex' ],
-            html[data_start_index : html.find( SITE_SETTINGS[ 'series_search' ][ 'end' ] , data_start_index)]
+            html[data_start_index : html.find( SITE_SETTINGS[ 'series_search' ][ 'end' ], data_start_index)]
         )
     )
 
@@ -1227,16 +1228,17 @@ def makeMoviesSearchCatalog(params):
 
     html = request_helper(BASEURL + URL_PATHS['movies']).text
 
-    data_start_index = html.find('"ddmcc"')
+    data_start_index = html.find( SITE_SETTINGS[ 'movie_search' ][ 'start' ] )
     if data_start_index == -1:
         raise Exception('Movies search scrape fail: ' + params['query'])
 
     query_lower = params['query'].lower()
 
     return catalogFromIterable(
-        match.groups()
+        (match.group('link'), match.group('name'))
         for match in re.finditer(
-            '''<a href="([^"]+).*?>([^<]+)''', html[data_start_index : html.find('/ul></ul', data_start_index)]
+            SITE_SETTINGS[ 'movie_search' ][ 'regex' ],
+            html[data_start_index : html.find( SITE_SETTINGS[ 'movie_search' ][ 'end' ], data_start_index)]
         )
         if query_lower in match.group(2).lower()
     )
@@ -1246,7 +1248,8 @@ def makeEpisodesSearchCatalog(params):
     html = request_helper(
         BASEURL + '/search',
         data={'catara': params['query'], 'konuara': 'episodes'},
-        extra_headers={'Referer': BASEURL+'/'}
+        extra_headers={'Referer': BASEURL+'/'},
+        timeout=20
     ).text
 
     data_start_index = html.find( SITE_SETTINGS[ 'episode_search' ][ 'start' ] )
@@ -1254,10 +1257,10 @@ def makeEpisodesSearchCatalog(params):
         raise Exception('Episode search scrape fail: ' + params['query'])
 
     return catalogFromIterable(
-        match.groups()
+        (match.group('link'), match.group('name'))
         for match in re.finditer(
             SITE_SETTINGS[ 'episode_search' ][ 'regex' ],
-            html[data_start_index : html.find( SITE_SETTINGS[ 'episode_search' ][ 'end' ] , data_start_index )],
+            html[data_start_index : html.find( SITE_SETTINGS[ 'episode_search' ][ 'end' ], data_start_index )],
             re.DOTALL
         )
     )
@@ -1384,7 +1387,7 @@ def actionResolve(params):
     html = ''
 
     # check if is a premium only video
-    if 'This Video is For the WCO Premium Users Only' in content:
+    if 'This Video Is for Premium Users' in content:
 
         xbmc_debug( 'Premium video detected, attempting to work around for domain: ' + BASEURL )
         # check if there is a premium workaround in the site class

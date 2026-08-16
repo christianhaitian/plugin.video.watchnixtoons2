@@ -19,12 +19,17 @@ SITE_SETTINGS = {
     'series_search': {
         'regex': r'''<a href=\"(?P<link>[^\"]+)\"\s*title=\"(?P<name>[^\"]+)\">\s*<img\s*src=\"(?P<img>[^\"]+)''',
         'start': 'aramamotoru',
-        'end': 'cizgiyazisi',
+        'end': '"cizgiyazisi',
+    },
+    'movie_search': {
+        'regex': r'''<a href="(?P<link>[^"]+).*?>(?P<name>[^<]+)''',
+        'start': '"ddmcc"',
+        'end': '/ul></ul',
     },
     'episode_search': {
-        'regex': '''<a href="([^"]+)[^>]*>([^<]+)</a''',
-        'start': 'submit',
-        'end': 'cizgiyazisi',
+        'regex': r'''<a href=\"(?P<link>[^\"]+)[^>]*>(?P<name>[^<]+)</a''',
+        'start': '"submit"',
+        'end': '"cizgiyazisi',
     },
     'genre': {
         'regex': '''<a.*?"([^"]+).*?>(.*?)</''',
